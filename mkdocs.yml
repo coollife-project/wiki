@@ -15,8 +15,8 @@ theme:
   font:
     text: Ubuntu
     code: Ubuntu Mono
-  favicon: favicon.png
-  logo: logo.svg
+  favicon: logo.png
+  logo: logo.png
   icon:
     repo: fontawesome/brands/github
   features:
