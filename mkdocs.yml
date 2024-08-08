@@ -1,0 +1,12 @@
+site_name: CoolLIFE Project
+site_url: https://github.com/coollife-project/wiki/
+repo_url: https://github.com/coollife-project/wiki/wiki
+edit_uri: ./_edit
+hooks:
+  - change_edit_url.py
+plugins:
+  - search
+theme:
+  name: material
+  features:
+    - content.action.edit
