@@ -15,8 +15,8 @@ theme:
   font:
     text: Ubuntu
     code: Ubuntu Mono
-  favicon: logo.png
-  logo: logo.png
+  favicon: https://github.com/coollife-project/.github/blob/main/logo.png
+  logo: https://github.com/coollife-project/.github/blob/main/logo.png
   icon:
     repo: fontawesome/brands/github
   features:
