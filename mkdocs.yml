@@ -4,9 +4,21 @@ repo_url: https://github.com/coollife-project/wiki/wiki
 edit_uri: ./_edit
 hooks:
   - change_edit_url.py
+extra:
+  generator: false  # Hide "Made with Material for MkDocs"
+markdown_extensions:
+  - pymdownx.magiclink  # converts bare URLs into hyperlinks
 plugins:
   - search
 theme:
   name: material
+  font:
+    text: Ubuntu
+    code: Ubuntu Mono
+  favicon: favicon.png
+  logo: logo.svg
+  icon:
+    repo: fontawesome/brands/github
   features:
-    - content.action.edit
+    - content.action.edit  # Show Edit Page
+    - navigation.top  # Show "Back to Top" on scrolling
