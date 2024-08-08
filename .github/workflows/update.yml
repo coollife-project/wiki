@@ -1,0 +1,33 @@
+name: Update Github Pages
+on:
+  gollum:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '**.yml'  
+permissions:
+  contents: write      
+jobs:
+  wiki-to-github-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}
+      - name: Check out wiki
+        uses: actions/checkout@v3
+        with:
+          repository: ${{github.repository}}.wiki
+          path: 'docs'
+      - run: mv docs/Home.md docs/index.md
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.x
+      - name: Install dependencies
+        run: pip3 install -U -r requirements.txt
+      - name: Deploy to GitHub Pages
+        run: mkdocs gh-deploy --force
