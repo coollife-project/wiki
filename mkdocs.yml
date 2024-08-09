@@ -6,6 +6,13 @@ hooks:
   - change_edit_url.py
 extra:
   generator: false  # Hide "Made with Material for MkDocs"
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/coollife-project/
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/CoolLIFE_EU
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/coollife_project/
 extra_css:
   - custom.css
 markdown_extensions:
@@ -24,6 +31,8 @@ theme:
   features:
     - content.action.edit  # Show Edit Page
     - navigation.top  # Show "Back to Top" on scrolling
+    - navigation.expand  # Expand left menu sections
+    - navigation.footer  # Show footer navigation
   user_color_mode_toggle: true
   palette:
     - media: "(prefers-color-scheme: light)"
@@ -40,3 +49,10 @@ theme:
       toggle:
         icon: material/weather-night
         name: Switch to light mode
+
+
+nav:
+  - Wiki Introduction:
+    - Welcome Page: index.md
+  - For Authors:
+    - Create New Page: https://github.com/coollife-project/wiki/wiki/_new
