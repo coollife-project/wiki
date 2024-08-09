@@ -6,9 +6,9 @@ on:
     branches:
       - main
     paths:
-      - '**.yml'  
+      - '**.yml'
 permissions:
-  contents: write      
+  contents: write
 jobs:
   wiki-to-github-pages:
     runs-on: ubuntu-latest
@@ -23,6 +23,7 @@ jobs:
           repository: ${{github.repository}}.wiki
           path: 'docs'
       - run: mv docs/Home.md docs/index.md
+      - run: cp custom.css docs/
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
