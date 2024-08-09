@@ -6,8 +6,10 @@ hooks:
   - change_edit_url.py
 extra:
   generator: false  # Hide "Made with Material for MkDocs"
+extra_css:
+  - custom.css
 markdown_extensions:
-  - pymdownx.magiclink  # converts bare URLs into hyperlinks
+  - pymdownx.magiclink  # Convert bare URLs into hyperlinks
 plugins:
   - search
 theme:
@@ -26,10 +28,8 @@ theme:
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
-      # primary: light blue
       primary: indigo
       accent: indigo
-      # primary: #0AA7B8  # hotmaps cyan
       toggle:
         icon: material/weather-sunny
         name: Switch to dark mode
