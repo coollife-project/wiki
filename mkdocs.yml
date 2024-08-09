@@ -1,4 +1,4 @@
-site_name: CoolLIFE Project Wiki
+site_name: CoolLIFE Wiki
 site_url: https://github.com/coollife-project/wiki/
 repo_url: https://github.com/coollife-project/wiki/wiki
 edit_uri: ./_edit
@@ -39,4 +39,4 @@ theme:
       accent: indigo
       toggle:
         icon: material/weather-night
-        name: Switch to light mode  
+        name: Switch to light mode
