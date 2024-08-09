@@ -17,6 +17,7 @@ extra_css:
   - custom.css
 markdown_extensions:
   - pymdownx.magiclink  # Convert bare URLs into hyperlinks
+  - attr_list  # Allow setting attributes on block elements
 plugins:
   - search
 theme:
@@ -28,6 +29,7 @@ theme:
   logo: https://raw.githubusercontent.com/coollife-project/.github/main/logo.png
   icon:
     repo: fontawesome/brands/github
+    # edit: material/file-edit-outline
   features:
     - content.action.edit  # Show Edit Page
     - navigation.top  # Show "Back to Top" on scrolling
