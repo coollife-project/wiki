@@ -4,6 +4,13 @@ repo_url: https://github.com/coollife-project/wiki/wiki
 edit_uri: ./_edit
 hooks:
   - change_edit_url.py
+extra_css:
+  - custom.css
+markdown_extensions:
+  - pymdownx.magiclink  # Convert bare URLs into hyperlinks
+  - attr_list  # Allow setting attributes on block elements
+plugins:
+  - search
 extra:
   generator: false  # Hide "Made with Material for MkDocs"
   social:
@@ -13,13 +20,6 @@ extra:
       link: https://x.com/CoolLIFE_EU
     - icon: fontawesome/brands/linkedin
       link: https://www.linkedin.com/company/coollife_project/
-extra_css:
-  - custom.css
-markdown_extensions:
-  - pymdownx.magiclink  # Convert bare URLs into hyperlinks
-  - attr_list  # Allow setting attributes on block elements
-plugins:
-  - search
 theme:
   name: material
   font:
@@ -52,9 +52,33 @@ theme:
         icon: material/weather-night
         name: Switch to light mode
 
+# nav:
+#   - For Authors:
+#     - Create New Page: https://github.com/coollife-project/wiki/wiki/_new
 
 nav:
   - Wiki Introduction:
-    - Welcome Page: index.md
-  - For Authors:
-    - Create New Page: https://github.com/coollife-project/wiki/wiki/_new
+    - Welcome Page (Introduction To The CoolLIFE Project): welcome-page-introduction-to-the-coollife-project.md
+  - Dataset:
+    - Methodology Of Data Collection + Cross-checking: methodology-of-data-collection-cross-checking.md
+    - Open Data Repository (any Sub-sections?): open-data-repository-any-sub-sections.md
+  - General Functionalities & Structure:
+    - The CoolLIFE Knowledge Hub (any Subsections?): the-coollife-knowledge-hub-any-subsections.md
+    - The CoolLIFE Tool: the-coollife-tool.md
+    - Layers: layers.md
+    - Select A Region: select-a-region.md
+    - Retrieve Indicators Of A Selected Area: retrieve-indicators-of-a-selected-area.md
+    - Access To Calculation Modules: access-to-calculation-modules.md
+    - User Account Functionalities (layer Upload, Export, Etc.): user-account-functionalities-layer-upload-export-etc.md
+  - How To Use The CoolLIFE Tool (Guidelines):
+    - Use Cases For Different Target Groups (see User Stories In T5.3): use-cases-for-different-target-groups-see-user-stories-in-t53.md
+    - Guideline To Perform Cooling Analyses And Planning (Comprehensive Assessments, NECPs, Local Strategies): guideline-to-perform-cooling-analyses-and-planning-comprehensive-assessments-necps-local-strategies.md
+  - Calculation Modules:
+    - "CM 1: Space Cooling Demand": cm-1-space-cooling-demand.md
+    - "CM 2: Technologies And Measures": cm-2-technologies-and-measures.md
+    - "CM 3: Comfort, Lifestyle, And User Behaviour": cm-3-comfort-lifestyle-and-user-behaviour.md
+    - "CM 4: Economic Feasibility": cm-4-economic-feasibility.md
+    - "CM 5: Demand-side Management/Demand Response": cm-5-demand-side-managementdemand-response.md
+    - "Extra: Legal And Regulatory Layers": extra-legal-and-regulatory-layers.md
+  - Learning Center:
+    - Training Material: training-material.md
