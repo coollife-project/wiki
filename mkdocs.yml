@@ -4,6 +4,7 @@ repo_url: https://github.com/coollife-project/wiki/wiki
 edit_uri_template: '{path_noext}/_edit'  # https://www.mkdocs.org/user-guide/configuration/#edit_uri_template
 hooks:
   - change_edit_url.py
+  - add_id_to_first_h1.py
 extra_css:
   - custom.css
 markdown_extensions:
