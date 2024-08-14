@@ -2,8 +2,6 @@
 title: "{title}"
 ---
 
-[](){#top}
-
 ## Introduction
 
 **[Go To Top](#top)**
