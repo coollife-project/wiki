@@ -60,7 +60,7 @@ theme:
 nav:
   - "Wiki Introduction":
     - welcome-page-introduction-to-the-coollife-project.md
-    - how-to-use-this-wiki.md
+    - how-to-edit-this-wiki.md
   - "Dataset":
     - methodology-of-data-collection-cross-checking.md
     - open-data-repository-any-sub-sections.md
