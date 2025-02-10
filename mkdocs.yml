@@ -63,9 +63,9 @@ nav:
     - how-to-edit-this-wiki.md
   - "Dataset":
     - methodology-of-data-collection-cross-checking.md
-    - open-data-repository-any-sub-sections.md
+    - open-data-repository.md
   - "General Functionalities & Structure":
-    - the-coollife-knowledge-hub-any-subsections.md
+    - the-coollife-knowledge-hub.md
     - the-coollife-tool.md
     - layers.md
     - select-a-region.md
@@ -81,7 +81,7 @@ nav:
     - cm-3-comfort-lifestyle-and-user-behaviour.md
     - cm-4-economic-feasibility.md
     - cm-5-demand-side-managementdemand-response.md
-    - cm-financial-mapping.md
+    - extra-financial-instruments-layer.md
     - extra-legal-and-regulatory-layers.md
   - "Learning Center":
-    - training-material.md
+    - learning-center.md
