@@ -66,8 +66,8 @@ nav:
     - open-data-repository.md
   - "General Functionality":
     - the-coollife-tool.md
-    - layers.md
     - select-a-region.md
+    - layers.md
     - retrieve-indicators-of-a-selected-area.md
     - access-to-calculation-modules.md
     - user-account-functionalities-layer-upload-export-etc.md
