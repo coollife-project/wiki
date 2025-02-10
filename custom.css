@@ -13,3 +13,12 @@
 .md-header__source {  /* Hide link to GitHub repository */
     /* display: none; */
 }
+
+ul, ol {
+    margin-left: 20px;
+    margin-bottom: 1em;
+}
+
+li {
+    margin-bottom: 0.5em;
+}
