@@ -13,3 +13,30 @@
 .md-header__source {  /* Hide link to GitHub repository */
     /* display: none; */
 }
+
+.md-button {
+    background-color: #e0e0e0;  /* Light grey background for all buttons */
+    color: #333333;            /* Dark text color */
+    padding: 10px 20px;        /* Adjust button size */
+    border-radius: 6px;        /* Rounded corners */
+    text-decoration: none;     /* Remove underline */
+    font-weight: bold;         /* Bold text */
+    display: inline-block;     /* Ensures button layout */
+    transition: background-color 0.3s ease;  /* Smooth hover effect */
+}
+
+.md-button:hover {
+    background-color: #cccccc;  /* Slightly darker on hover */
+}
+
+.md-button--primary {
+    background-color: #007BFF;  /* Primary blue color */
+    color: white;               /* White text */
+    border-radius: 8px;         /* Slightly more rounded */
+    padding: 12px 24px;         /* Larger padding for primary buttons */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* Subtle shadow */
+}
+
+.md-button--primary:hover {
+    background-color: #0056b3;  /* Darker blue on hover */
+}
