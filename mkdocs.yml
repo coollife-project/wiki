@@ -65,7 +65,6 @@ nav:
     - methodology-of-data-collection-cross-checking.md
     - open-data-repository.md
   - "General Functionality":
-    - the-coollife-knowledge-hub.md
     - the-coollife-tool.md
     - layers.md
     - select-a-region.md
@@ -85,3 +84,6 @@ nav:
     - extra-legal-and-regulatory-layers.md
   - "Learning Center":
     - learning-center.md
+  - "The CoolLIFE Knowledge Hub":
+    - the-coollife-knowledge-hub.md
+  
