@@ -61,7 +61,7 @@ nav:
   - "CoolLIFE Wiki":
     - welcome-page-introduction-to-the-coollife-project.md
     - about-the-wiki.md
-    - ho-to-edit-this-wiki.md
+    - how-to-edit-this-wiki.md
   - "Dataset":
     - methodology-of-data-collection-cross-checking.md
     - open-data-repository.md
