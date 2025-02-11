@@ -69,6 +69,7 @@ nav:
     - about-the-tool.md
     - user-interface-navigation.md
     - key-features.md
+    - general-workflow.md
   - "Calculation Modules of the Tool":
     - cm-1-space-cooling-demand.md
     - cm-2-technologies-and-measures.md
