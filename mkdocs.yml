@@ -65,14 +65,14 @@ nav:
   - "Data for the Tool":
     - methodology-of-data-collection-cross-checking.md
     - open-data-repository.md
-  - "CoolLIFE Tool Overview":
+  - "CoolLIFE Tool Overview and User Guide":
     - the-coollife-tool.md
     - select-a-region.md
     - layers.md
     - retrieve-indicators-of-a-selected-area.md
     - access-to-calculation-modules.md
     - user-account-functionalities-layer-upload-export-etc.md
-  - "Tool Calculation Modules":
+  - "Calculation Modules of the Tool":
     - cm-1-space-cooling-demand.md
     - cm-2-technologies-and-measures.md
     - cm-3-comfort-lifestyle-and-user-behaviour.md
@@ -83,7 +83,7 @@ nav:
   - "Practical Use of the Tool":
     - use-cases-for-different-target-groups-see-user-stories-in-t53.md
     - guideline-to-perform-cooling-analyses-and-planning-comprehensive-assessments-necps-local-strategies.md
-  - "The CoolLIFE Knowledge Hub":
+  - "CoolLIFE Knowledge Hub":
     - the-coollife-knowledge-hub.md
   - "Learning Center":
     - learning-center.md
