@@ -66,12 +66,9 @@ nav:
     - methodology-of-data-collection-cross-checking.md
     - open-data-repository.md
   - "CoolLIFE Tool Overview and User Guide":
-    - the-coollife-tool.md
-    - select-a-region.md
-    - layers.md
-    - retrieve-indicators-of-a-selected-area.md
-    - access-to-calculation-modules.md
-    - user-account-functionalities-layer-upload-export-etc.md
+    - about-the-tool.md
+    - user-interface-navigation.md
+    - key-features.md
   - "Calculation Modules of the Tool":
     - cm-1-space-cooling-demand.md
     - cm-2-technologies-and-measures.md
