@@ -62,20 +62,17 @@ nav:
     - welcome-page-introduction-to-the-coollife-project.md
     - about-the-wiki.md
     - how-to-edit-this-wiki.md
-  - "Dataset":
+  - "Data for the Tool":
     - methodology-of-data-collection-cross-checking.md
     - open-data-repository.md
-  - "General Functionality":
+  - "Tool Functionality":
     - the-coollife-tool.md
     - select-a-region.md
     - layers.md
     - retrieve-indicators-of-a-selected-area.md
     - access-to-calculation-modules.md
     - user-account-functionalities-layer-upload-export-etc.md
-  - "How To Use The CoolLIFE Tool (Guidelines)":
-    - use-cases-for-different-target-groups-see-user-stories-in-t53.md
-    - guideline-to-perform-cooling-analyses-and-planning-comprehensive-assessments-necps-local-strategies.md
-  - "Calculation Modules":
+  - "Tool Calculation Modules":
     - cm-1-space-cooling-demand.md
     - cm-2-technologies-and-measures.md
     - cm-3-comfort-lifestyle-and-user-behaviour.md
@@ -83,8 +80,12 @@ nav:
     - cm-5-demand-side-managementdemand-response.md
     - extra-financial-instruments-layer.md
     - extra-legal-and-regulatory-layers.md
-  - "Learning Center":
-    - learning-center.md
+  - "How To Use The Tool":
+    - use-cases-for-different-target-groups-see-user-stories-in-t53.md
+    - guideline-to-perform-cooling-analyses-and-planning-comprehensive-assessments-necps-local-strategies.md
   - "The CoolLIFE Knowledge Hub":
     - the-coollife-knowledge-hub.md
+  - "Learning Center":
+    - learning-center.md
+  
   
