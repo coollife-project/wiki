@@ -60,7 +60,6 @@ theme:
 nav:
   - "Getting Started":
     - welcome-page-introduction-to-the-coollife-project.md
-    - learning-center.md
   - "CoolLIFE Tool Overview and User Guide":
     - about-the-tool.md
     - user-interface-navigation.md
@@ -77,8 +76,8 @@ nav:
   - "How to Apply the CoolLIFE Tool":
     - use-cases-for-different-target-groups-see-user-stories-in-t53.md
     - guideline-to-perform-cooling-analyses-and-planning-comprehensive-assessments-necps-local-strategies.md
-    
-
+  - "Learning Center":
+    - learnin-center.md
     
   
   
