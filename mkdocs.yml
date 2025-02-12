@@ -60,10 +60,9 @@ theme:
 nav:
   - "Getting Started":
     - welcome-page-introduction-to-the-coollife-project.md
-    - about-the-tool.md
-    - the-coollife-knowledge-hub.md
     - learning-center.md
   - "CoolLIFE Tool Overview and User Guide":
+    - about-the-tool.md
     - user-interface-navigation.md
     - core-functions.md
     - general-workflow.md
