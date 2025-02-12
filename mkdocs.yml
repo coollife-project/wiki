@@ -60,17 +60,14 @@ theme:
 nav:
   - "Getting Started":
     - welcome-page-introduction-to-the-coollife-project.md
-    - about-the-wiki.md
-    - how-to-edit-this-wiki.md
-  - "Data for the Tool":
-    - methodology-of-data-collection-cross-checking.md
-    - open-data-repository.md
-  - "CoolLIFE Tool Overview and User Guide":
     - about-the-tool.md
+    - the-coollife-knowledge-hub.md
+    - learning-center.md
+  - "CoolLIFE Tool Overview and User Guide":
     - user-interface-navigation.md
     - core-functions.md
     - general-workflow.md
-  - "Calculation Modules of the Tool":
+  - "Calculation Modules of the CoolLIFE Tool":
     - cm-1-space-cooling-demand.md
     - cm-2-technologies-and-measures.md
     - cm-3-comfort-lifestyle-and-user-behaviour.md
@@ -78,12 +75,11 @@ nav:
     - cm-5-demand-side-managementdemand-response.md
     - extra-financial-instruments-layer.md
     - extra-legal-and-regulatory-layers.md
-  - "Practical Use of the Tool":
+  - "How to Apply the CoolLIFE Tool":
     - use-cases-for-different-target-groups-see-user-stories-in-t53.md
     - guideline-to-perform-cooling-analyses-and-planning-comprehensive-assessments-necps-local-strategies.md
-  - "CoolLIFE Knowledge Hub":
-    - the-coollife-knowledge-hub.md
-  - "Learning Center":
-    - learning-center.md
+    
+
+    
   
   
