@@ -66,13 +66,13 @@ nav:
     - core-functions.md
     - general-workflow.md
   - "Calculation Modules of the CoolLIFE Tool":
-    - cm-1-space-cooling-demand.md
-    - cm-2-technologies-and-measures.md
-    - cm-3-comfort-lifestyle-and-user-behaviour.md
-    - cm-4-economic-feasibility.md
-    - cm-5-demand-side-managementdemand-response.md
-    - extra-financial-instruments-layer.md
+    - cm-space-cooling-demand.md
+    - cm-economic-feasibility.md
+    - cm-comfort-lifestyle-and-user-behaviour.md
+    - cm-technologies-and-measures.md
+    - cm-demand-side-managementdemand-response.md
     - extra-legal-and-regulatory-layers.md
+    - extra-financial-instruments-layer.md
   - "How to Apply the CoolLIFE Tool":
     - use-cases-for-different-target-groups-see-user-stories-in-t53.md
     - guideline-to-perform-cooling-analyses-and-planning-comprehensive-assessments-necps-local-strategies.md
