@@ -58,7 +58,7 @@ theme:
 #     - Create New Page: https://github.com/coollife-project/wiki/wiki/_new
 
 nav:
-  - "Welcome":
+  - "Getting Started":
     - welcome-page-introduction-to-the-coollife-project.md
   - "CoolLIFE Tool Overview and User Guide":
     - about-the-tool.md
