@@ -4,37 +4,35 @@ title: "{title}"
 
 ## Introduction
 
-**[Go To Top](#top)**
-
 Write your content here
+
+**[Go To Top](#top)**
 
 ## Sections
 
-**[Go To Top](#top)**
-
 Write your content here
+
+**[Go To Top](#top)**
 
 ## How To Cite
 
-**[Go To Top](#top)**
-
 Write your content here
+
+**[Go To Top](#top)**
 
 ## Authors And Reviewers
 
-**[Go To Top](#top)**
-
 Write your content here
+
+**[Go To Top](#top)**
 
 ## License
 
-**[Go To Top](#top)**
-
 Write your content here
 
-## Acknowledgement
-
 **[Go To Top](#top)**
+
+## Acknowledgement
 
 Write your content here
 
