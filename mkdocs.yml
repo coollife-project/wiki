@@ -66,13 +66,18 @@ nav:
     - core-functions.md
     - general-workflow.md
   - "Calculation Modules of the CoolLIFE Tool":
-    - cm-space-cooling-demand.md
-    - cm-economic-feasibility.md
-    - cm-comfort-lifestyle-and-user-behaviour.md
-    - cm-technologies-and-measures.md
-    - cm-demand-side-management-demand-response.md
-    - extra-legal-and-regulatory-aspects.md
-    - extra-financial-instruments.md
+    - "Cooling":
+      - cm-space-cooling-demand.md
+      - cm-economic-feasibility.md
+      - cm-comfort-lifestyle-and-user-behaviour.md
+      - cm-technologies-and-measures.md
+      - cm-demand-side-management-demand-response.md
+    - "District Cooling":
+      - cm-district-cooling.md
+    - "Policy":
+      - extra-legal-and-regulatory-aspects.md
+    - "Finance":
+      - extra-financial-instruments.md
   - "How to Apply the CoolLIFE Tool":
     - use-cases-for-different-target-groups.md
     - guideline-to-perform-cooling-analyses-and-planning.md
