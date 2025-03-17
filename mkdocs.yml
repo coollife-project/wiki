@@ -79,13 +79,13 @@ nav:
     - "Finance":
       - extra-financial-instruments.md
   - "How to Apply the CoolLIFE Tool":
-    - user-story-1-sc-integration-in-the-energy-efficiency-sector.md
-    - user-story-2-strategic-planning-of-space-cooling.md
-    - user-story-3-space-cooling-at-the-building-level.md
-    - user-story-4-data-for-sc-planners.md
-    - user-story-5-reduction-of-energy-consumption-due-to-sc-in-buildings.md
-    - user-story-6-sc-integration-in-energy-communities.md
-    - user-story-7-comprehensive-assessment-report.md
+    - use-case-1-sc-integration-in-the-energy-efficiency-sector.md
+    - use-case-2-strategic-planning-of-space-cooling.md
+    - use-case-3-space-cooling-at-the-building-level.md
+    - use-case-4-data-for-sc-planners.md
+    - use-case-5-reduction-of-energy-consumption-due-to-sc-in-buildings.md
+    - use-case-6-sc-integration-in-energy-communities.md
+    - use-case-7-comprehensive-assessment-report.md
   - "Learning Center":
     - learning-center.md
     - beyond-the-tool-and-the-hub.md
