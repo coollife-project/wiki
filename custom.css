@@ -1,0 +1,24 @@
+.md-content__button::after {
+    content: "Edit page";
+}
+
+.md-source__facts {  /* Hide repository facts (GitHub forks and stars) */
+    display: none;
+}
+
+.md-source__repository {  /* Hide "GitHub" text */
+    display: none;
+}
+
+.md-header__source {  /* Hide link to GitHub repository */
+    /* display: none; */
+}
+
+ul, ol {
+    margin-left: 20px;
+    margin-bottom: 1em;
+}
+
+li {
+    margin-bottom: 0.5em;
+}
