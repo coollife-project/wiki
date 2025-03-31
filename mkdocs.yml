@@ -75,9 +75,9 @@ nav:
     - "District Cooling":
       - cm-district-cooling.md
     - "Policy":
-      - extra-legal-and-regulatory-aspects.md
+      - legal-and-regulatory-aspects.md
     - "Finance":
-      - extra-financial-instruments.md
+      - financial-instruments.md
   - "How to Apply the CoolLIFE Tool":
     - use-case-1-sc-integration-in-the-energy-efficiency-sector.md
     - use-case-2-strategic-planning-of-space-cooling.md
