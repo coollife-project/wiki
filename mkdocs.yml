@@ -65,6 +65,8 @@ nav:
     - user-interface-navigation.md
     - core-functions.md
     - general-workflow.md
+    - data-upload.md
+    - data-export.md
   - "Calculation Modules of the CoolLIFE Tool":
     - "Cooling":
       - cm-space-cooling-demand.md
