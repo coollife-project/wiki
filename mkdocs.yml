@@ -52,6 +52,12 @@ theme:
       toggle:
         icon: material/weather-night
         name: Switch to light mode
+        
+extra_javascript:
+  - assets/uploads/coollife_training.pptx
+  - assets/uploads/dhc_final.pptx
+  - assets/uploads/dsc_training.pptx
+  - assets/uploads/ehp_webinar.pptx
 
 # nav:
 #   - For Authors:
