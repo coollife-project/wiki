@@ -1,2 +1,4 @@
-mkdocs-material
+mkdocs>=1.5
+mkdocs-material>=9.5
 pymdown-extensions
+mkdocs-static-files
