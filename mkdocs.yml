@@ -12,11 +12,6 @@ markdown_extensions:
   - attr_list  # Allow setting attributes on block elements
 plugins:
   - search
-  - mkdocs-simple-hooks  # Optional, if used
-  - include-markdown     # Optional
-  - files:
-      include:
-      - uploads/**  # this tells MkDocs to include all files under uploads/
 extra:
   generator: false  # Hide "Made with Material for MkDocs"
   social:
