@@ -164,7 +164,7 @@ class WikiTranslator {
     }
 
     async translateText(text, targetLang) {
-        const GOOGLE_API_KEY = 'AIzaSyAu8_fL8MGl6MwyTouVXuROE6vWDVmmtxk'; // Replace with real key
+        const GOOGLE_API_KEY = 'AIzaSyDXeNiXYoHsugjBY0GjDF5R0NQF_sq_5lU'; // Replace with real key
         
         // Skip translation for English or empty text
         if (targetLang === 'en' || !text.trim()) {
