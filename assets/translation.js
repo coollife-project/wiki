@@ -148,24 +148,31 @@ class WikiTranslator {
     }
 
     async translateElement(element, targetLang) {
-        const key = this.getElementKey(element);
-        
-        // Store original content
+    const key = this.getElementKey(element);
+    
+    // Store original content
         if (!this.originalContent.has(key)) {
             this.originalContent.set(key, element.textContent);
         }
         
         const originalText = this.originalContent.get(key);
-        if (originalText && originalText.trim()) {
-            const translatedText = await this.translateText(originalText, targetLang);
+        // Only translate if it's actual text content (not HTML or empty)
+        if (originalText && originalText.trim() && !originalText.includes('<')) {
+            const translatedText = await this.translateText(originalText.trim(), targetLang);
             element.textContent = translatedText;
         }
     }
 
     async translateText(text, targetLang) {
-        // Using LibreTranslate API (free)
+        const GOOGLE_API_KEY = 'AIzaSyAu8_fL8MGl6MwyTouVXuROE6vWDVmmtxk'; // Replace with real key
+        
+        // Skip translation for English or empty text
+        if (targetLang === 'en' || !text.trim()) {
+            return text;
+        }
+
         try {
-            const response = await fetch('https://libretranslate.de/translate', {
+            const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -173,17 +180,25 @@ class WikiTranslator {
                 body: JSON.stringify({
                     q: text,
                     source: 'en',
-                    target: targetLang
+                    target: targetLang,
+                    format: 'text'
                 })
             });
 
-            const data = await response.json();
-            return data.translatedText || text;
+            if (response.ok) {
+                const data = await response.json();
+                const translatedText = data.data.translations[0].translatedText;
+                console.log(`✅ Translated "${text}" to "${translatedText}"`);
+                return translatedText;
+            } else {
+                console.error('Google Translate API error:', response.status, response.statusText);
+                return text; // Return original if API fails
+            }
         } catch (error) {
             console.error('Translation API error:', error);
-            return text; // Return original text if translation fails
+            return text; // Return original if API fails
         }
-    }
+}
 
     restoreOriginalContent() {
         this.originalContent.forEach((content, key) => {
