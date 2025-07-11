@@ -125,124 +125,67 @@ class WikiTranslator {
     }
 
     async translateContent(targetLang) {
-    if (targetLang === 'en') {
-        this.restoreOriginalContent();
-        return;
-    }
-
-    this.showLoadingIndicator();
-
-    try {
-        // Get ALL text nodes in the page (more comprehensive approach)
-        this.translateAllTextNodes(document.body, targetLang);
-    } catch (error) {
-        console.error('Translation failed:', error);
-        alert('Translation failed. Please try again.');
-    } finally {
-        this.hideLoadingIndicator();
-    }
-}
-
-    async translateAllTextNodes(element, targetLang) {
-        // Skip the language dropdown itself
-        if (element.closest && element.closest('.language-dropdown')) {
+        if (targetLang === 'en') {
+            this.restoreOriginalContent();
             return;
         }
 
-        // If this is a text node with actual content
-        if (element.nodeType === Node.TEXT_NODE) {
-            const text = element.textContent.trim();
-            if (text && text.length > 0 && !this.shouldSkipText(text)) {
-                const key = 'text_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                
-                // Store original
-                if (!this.originalContent.has(key)) {
-                    this.originalContent.set(key, text);
-                    element.setAttribute('data-translation-key', key);
-                }
-                
-                // Translate
-                const translatedText = await this.translateText(text, targetLang);
-                element.textContent = translatedText;
-            }
-        } else if (element.nodeType === Node.ELEMENT_NODE) {
-            // For element nodes, recursively process child nodes
-            const children = Array.from(element.childNodes);
-            for (const child of children) {
-                await this.translateAllTextNodes(child, targetLang);
-            }
-        }
-}
+        this.showLoadingIndicator();
 
-    shouldSkipText(text) {
-        // Skip very short text, numbers only, or common UI elements that shouldn't be translated
-        if (text.length < 2) return true;
-        if (/^\d+$/.test(text)) return true;
-        if (/^[^\w\s]+$/.test(text)) return true; // Only symbols
-        return false;
+        try {
+            // Simple approach - target specific elements that need translation
+            const selectors = [
+                // Main content
+                '.md-content h1',
+                '.md-content h2', 
+                '.md-content h3',
+                '.md-content h4',
+                '.md-content h5',
+                '.md-content h6',
+                '.md-content p',
+                '.md-content li',
+                // Navigation
+                '.md-nav__title',
+                '.md-nav__link',
+                // Table of contents
+                '.md-toc__link',
+                // Header title
+                '.md-header__title'
+            ];
+
+            for (const selector of selectors) {
+                const elements = document.querySelectorAll(selector);
+                console.log(`Found ${elements.length} elements for selector: ${selector}`);
+                
+                for (const element of elements) {
+                    // Skip if it's inside the language dropdown
+                    if (element.closest('.language-dropdown')) continue;
+                    
+                    await this.translateElement(element, targetLang);
+                }
+            }
+        } catch (error) {
+            console.error('Translation failed:', error);
+            alert('Translation failed. Please try again.');
+        } finally {
+            this.hideLoadingIndicator();
+        }
 }
 
     async translateElement(element, targetLang) {
-        // This function is now replaced by translateAllTextNodes
-        // Keep for compatibility but make it simpler
-        const text = element.textContent.trim();
-        if (text && text.length > 0) {
-            const key = this.getElementKey(element);
-            
-            if (!this.originalContent.has(key)) {
-                this.originalContent.set(key, text);
-            }
-            
-            const translatedText = await this.translateText(text, targetLang);
-            element.textContent = translatedText;
-        }
-}
-
-    restoreOriginalContent() {
-        // Find all elements with translation keys and restore them
-        document.querySelectorAll('[data-translation-key]').forEach(element => {
-            const key = element.getAttribute('data-translation-key');
-            const originalText = this.originalContent.get(key);
-            if (originalText) {
-                element.textContent = originalText;
-            }
-        });
-}
-
-    async translateText(text, targetLang) {
-        const GOOGLE_API_KEY = 'AIzaSyDXeNiXYoHsugjBY0GjDF5R0NQF_sq_5lU'; // Replace with real key
+        const key = this.getElementKey(element);
         
-        // Skip translation for English or empty text
-        if (targetLang === 'en' || !text.trim()) {
-            return text;
+        // Store original content
+        if (!this.originalContent.has(key)) {
+            this.originalContent.set(key, element.textContent);
         }
-
-        try {
-            const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    q: text,
-                    source: 'en',
-                    target: targetLang,
-                    format: 'text'
-                })
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                const translatedText = data.data.translations[0].translatedText;
-                console.log(`✅ Translated "${text}" to "${translatedText}"`);
-                return translatedText;
-            } else {
-                console.error('Google Translate API error:', response.status, response.statusText);
-                return text; // Return original if API fails
-            }
-        } catch (error) {
-            console.error('Translation API error:', error);
-            return text; // Return original if API fails
+        
+        const originalText = this.originalContent.get(key);
+        if (originalText && originalText.trim() && originalText.length > 1) {
+            console.log(`Translating: "${originalText}"`);
+            const translatedText = await this.translateText(originalText.trim(), targetLang);
+            console.log(`Result: "${translatedText}"`);
+            element.textContent = translatedText;
         }
 }
 
@@ -253,7 +196,7 @@ class WikiTranslator {
                 element.textContent = content;
             }
         });
-    }
+}
 
     getElementKey(element) {
         if (!element.dataset.translationKey) {
