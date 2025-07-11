@@ -2,7 +2,7 @@
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
-            { code: 'en', name: 'English', flag: 'EN' },
+            { code: 'en', name: 'English', flag: '🇬🇧' },
             { code: 'bg', name: 'Български', flag: '🇧🇬' },
             { code: 'hr', name: 'Hrvatski', flag: '🇭🇷' },
             { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
@@ -34,7 +34,6 @@ class WikiTranslator {
     }
 
     init() {
-        // Wait for page to be fully loaded
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', () => this.setup());
         } else {
@@ -49,7 +48,6 @@ class WikiTranslator {
     }
 
     addLanguageDropdown() {
-        // Find the header navigation
         const header = document.querySelector('.md-header__inner') || 
                       document.querySelector('.md-header') ||
                       document.querySelector('header');
@@ -107,7 +105,6 @@ class WikiTranslator {
             });
         }
 
-        // Close dropdown when clicking outside
         document.addEventListener('click', () => {
             if (menu) menu.style.display = 'none';
         });
@@ -133,9 +130,7 @@ class WikiTranslator {
         this.showLoadingIndicator();
 
         try {
-            // Simple approach - target specific elements that need translation
             const selectors = [
-                // Main content
                 '.md-content h1',
                 '.md-content h2', 
                 '.md-content h3',
@@ -144,13 +139,9 @@ class WikiTranslator {
                 '.md-content h6',
                 '.md-content p',
                 '.md-content li',
-                // Navigation
                 '.md-nav__title',
                 '.md-nav__link',
-                // Table of contents
-                '.md-toc__link',
-                // Header title
-                '.md-header__title'
+                '.md-toc__link'
             ];
 
             for (const selector of selectors) {
@@ -158,9 +149,7 @@ class WikiTranslator {
                 console.log(`Found ${elements.length} elements for selector: ${selector}`);
                 
                 for (const element of elements) {
-                    // Skip if it's inside the language dropdown
                     if (element.closest('.language-dropdown')) continue;
-                    
                     await this.translateElement(element, targetLang);
                 }
             }
@@ -175,7 +164,6 @@ class WikiTranslator {
     async translateElement(element, targetLang) {
         const key = this.getElementKey(element);
         
-        // Store original content
         if (!this.originalContent.has(key)) {
             this.originalContent.set(key, element.textContent);
         }
@@ -189,24 +177,16 @@ class WikiTranslator {
         }
     }
 
-    restoreOriginalContent() {
-        this.originalContent.forEach((content, key) => {
-            const element = document.querySelector(`[data-translation-key="${key}"]`);
-            if (element) {
-                element.textContent = content;
-            }
-        });
-    }
-
     async translateText(text, targetLang) {
-        const GOOGLE_API_KEY = 'AIzaSyDXeNiXYoHsugjBY0GjDF5R0NQF_sq_5lU'; // Replace with real key
+        const GOOGLE_API_KEY = 'AIzaSyDXeNiXYoHsugjBY0GjDF5R0NQF_sq_5lU'; // Replace with your new restricted key
         
-        // Skip translation for English or empty text
         if (targetLang === 'en' || !text.trim()) {
             return text;
         }
 
         try {
+            console.log(`🌍 Translating "${text}" to ${targetLang}`);
+            
             const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`, {
                 method: 'POST',
                 headers: {
@@ -223,19 +203,27 @@ class WikiTranslator {
             if (response.ok) {
                 const data = await response.json();
                 const translatedText = data.data.translations[0].translatedText;
-                console.log(`✅ Translated "${text}" to "${translatedText}"`);
+                console.log(`✅ Google Translate: "${translatedText}"`);
                 return translatedText;
             } else {
-                console.error('Google Translate API error:', response.status, response.statusText);
-                return text; // Return original if API fails
+                const errorData = await response.json();
+                console.error('❌ Google Translate API error:', response.status, errorData);
+                return text;
             }
         } catch (error) {
-            console.error('Translation API error:', error);
-            return text; // Return original if API fails
+            console.error('❌ Translation failed:', error);
+            return text;
         }
     }
 
-
+    restoreOriginalContent() {
+        this.originalContent.forEach((content, key) => {
+            const element = document.querySelector(`[data-translation-key="${key}"]`);
+            if (element) {
+                element.textContent = content;
+            }
+        });
+    }
 
     getElementKey(element) {
         if (!element.dataset.translationKey) {
