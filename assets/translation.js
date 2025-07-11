@@ -141,7 +141,7 @@ class WikiTranslator {
         } finally {
             this.hideLoadingIndicator();
         }
-}
+    }
 
     async translateAllTextNodes(element, targetLang) {
         // Skip the language dropdown itself
@@ -244,16 +244,9 @@ class WikiTranslator {
             console.error('Translation API error:', error);
             return text; // Return original if API fails
         }
-}
-
-    restoreOriginalContent() {
-        this.originalContent.forEach((content, key) => {
-            const element = document.querySelector(`[data-translation-key="${key}"]`);
-            if (element) {
-                element.textContent = content;
-            }
-        });
     }
+
+
 
     getElementKey(element) {
         if (!element.dataset.translationKey) {
