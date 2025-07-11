@@ -125,68 +125,88 @@ class WikiTranslator {
     }
 
     async translateContent(targetLang) {
-        if (targetLang === 'en') {
-            this.restoreOriginalContent();
+    if (targetLang === 'en') {
+        this.restoreOriginalContent();
+        return;
+    }
+
+    this.showLoadingIndicator();
+
+    try {
+        // Get ALL text nodes in the page (more comprehensive approach)
+        this.translateAllTextNodes(document.body, targetLang);
+    } catch (error) {
+        console.error('Translation failed:', error);
+        alert('Translation failed. Please try again.');
+    } finally {
+        this.hideLoadingIndicator();
+    }
+}
+
+    async translateAllTextNodes(element, targetLang) {
+        // Skip the language dropdown itself
+        if (element.closest && element.closest('.language-dropdown')) {
             return;
         }
 
-        this.showLoadingIndicator();
-
-        try {
-            // Translate ALL text content, including navigation
-            const elements = document.querySelectorAll(`
-                .md-content h1, 
-                .md-content h2, 
-                .md-content h3, 
-                .md-content h4, 
-                .md-content h5, 
-                .md-content h6,
-                .md-content p,
-                .md-content li,
-                .md-nav__title,
-                .md-nav__link,
-                .md-sidebar .md-nav__link,
-                .md-toc__link,
-                .md-header__title
-            `);
-            
-            console.log(`Found ${elements.length} elements to translate`);
-            
-            for (const element of elements) {
-                await this.translateElement(element, targetLang);
+        // If this is a text node with actual content
+        if (element.nodeType === Node.TEXT_NODE) {
+            const text = element.textContent.trim();
+            if (text && text.length > 0 && !this.shouldSkipText(text)) {
+                const key = 'text_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                
+                // Store original
+                if (!this.originalContent.has(key)) {
+                    this.originalContent.set(key, text);
+                    element.setAttribute('data-translation-key', key);
+                }
+                
+                // Translate
+                const translatedText = await this.translateText(text, targetLang);
+                element.textContent = translatedText;
             }
-        } catch (error) {
-            console.error('Translation failed:', error);
-            alert('Translation failed. Please try again.');
-        } finally {
-            this.hideLoadingIndicator();
+        } else if (element.nodeType === Node.ELEMENT_NODE) {
+            // For element nodes, recursively process child nodes
+            const children = Array.from(element.childNodes);
+            for (const child of children) {
+                await this.translateAllTextNodes(child, targetLang);
+            }
         }
 }
+
+    shouldSkipText(text) {
+        // Skip very short text, numbers only, or common UI elements that shouldn't be translated
+        if (text.length < 2) return true;
+        if (/^\d+$/.test(text)) return true;
+        if (/^[^\w\s]+$/.test(text)) return true; // Only symbols
+        return false;
+}
+
     async translateElement(element, targetLang) {
-        const key = this.getElementKey(element);
-        
-        // Store original content
-        if (!this.originalContent.has(key)) {
-            this.originalContent.set(key, element.textContent);
-        }
-        
-        const originalText = this.originalContent.get(key);
-        // Translate text content while preserving HTML structure
-        if (originalText && originalText.trim() && originalText.length > 0) {
-            const translatedText = await this.translateText(originalText.trim(), targetLang);
-            // Only change the text content, not the HTML structure
-            if (element.childElementCount === 0) {
-                // No child elements, safe to replace text
-                element.textContent = translatedText;
-            } else {
-                // Has child elements, replace only text nodes
-                element.childNodes.forEach(node => {
-                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-                        node.textContent = translatedText;
-                    }
-                });
+        // This function is now replaced by translateAllTextNodes
+        // Keep for compatibility but make it simpler
+        const text = element.textContent.trim();
+        if (text && text.length > 0) {
+            const key = this.getElementKey(element);
+            
+            if (!this.originalContent.has(key)) {
+                this.originalContent.set(key, text);
             }
+            
+            const translatedText = await this.translateText(text, targetLang);
+            element.textContent = translatedText;
         }
+}
+
+    restoreOriginalContent() {
+        // Find all elements with translation keys and restore them
+        document.querySelectorAll('[data-translation-key]').forEach(element => {
+            const key = element.getAttribute('data-translation-key');
+            const originalText = this.originalContent.get(key);
+            if (originalText) {
+                element.textContent = originalText;
+            }
+        });
 }
 
     async translateText(text, targetLang) {
