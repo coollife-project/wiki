@@ -29,6 +29,8 @@ li {
     position: relative;
     display: inline-block;
     margin-left: 1rem;
+    max-width: 150px; /* Add this */
+
 }
 
 .language-button {

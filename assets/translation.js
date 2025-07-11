@@ -2,7 +2,7 @@
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
-            { code: 'en', name: 'English', flag: '🇬🇧' },
+            { code: 'en', name: 'English', flag: 'EN' },
             { code: 'bg', name: 'Български', flag: '🇧🇬' },
             { code: 'hr', name: 'Hrvatski', flag: '🇭🇷' },
             { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
@@ -133,8 +133,19 @@ class WikiTranslator {
         this.showLoadingIndicator();
 
         try {
-            // Get all text elements to translate
-            const elements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, li, .md-nav__link');
+            // Only translate main content, avoid navigation structure
+            const elements = document.querySelectorAll(`
+                .md-content h1, 
+                .md-content h2, 
+                .md-content h3, 
+                .md-content h4, 
+                .md-content h5, 
+                .md-content h6,
+                .md-content p:not(.md-nav__link),
+                .md-content li:not(.md-nav__item)
+            `);
+            
+            console.log(`Found ${elements.length} elements to translate`);
             
             for (const element of elements) {
                 await this.translateElement(element, targetLang);
@@ -145,23 +156,26 @@ class WikiTranslator {
         } finally {
             this.hideLoadingIndicator();
         }
-    }
-
+}
     async translateElement(element, targetLang) {
-    const key = this.getElementKey(element);
-    
-    // Store original content
+        const key = this.getElementKey(element);
+        
+        // Skip elements that contain links or are navigation
+        if (element.querySelector('a') || element.closest('.md-nav')) {
+            return;
+        }
+        
+        // Store original content
         if (!this.originalContent.has(key)) {
             this.originalContent.set(key, element.textContent);
         }
         
         const originalText = this.originalContent.get(key);
-        // Only translate if it's actual text content (not HTML or empty)
         if (originalText && originalText.trim() && !originalText.includes('<')) {
             const translatedText = await this.translateText(originalText.trim(), targetLang);
             element.textContent = translatedText;
         }
-    }
+}
 
     async translateText(text, targetLang) {
         const GOOGLE_API_KEY = 'AIzaSyDXeNiXYoHsugjBY0GjDF5R0NQF_sq_5lU'; // Replace with real key
