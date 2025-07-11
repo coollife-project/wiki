@@ -133,7 +133,7 @@ class WikiTranslator {
         this.showLoadingIndicator();
 
         try {
-            // Only translate main content, avoid navigation structure
+            // Translate ALL text content, including navigation
             const elements = document.querySelectorAll(`
                 .md-content h1, 
                 .md-content h2, 
@@ -141,8 +141,13 @@ class WikiTranslator {
                 .md-content h4, 
                 .md-content h5, 
                 .md-content h6,
-                .md-content p:not(.md-nav__link),
-                .md-content li:not(.md-nav__item)
+                .md-content p,
+                .md-content li,
+                .md-nav__title,
+                .md-nav__link,
+                .md-sidebar .md-nav__link,
+                .md-toc__link,
+                .md-header__title
             `);
             
             console.log(`Found ${elements.length} elements to translate`);
@@ -160,20 +165,27 @@ class WikiTranslator {
     async translateElement(element, targetLang) {
         const key = this.getElementKey(element);
         
-        // Skip elements that contain links or are navigation
-        if (element.querySelector('a') || element.closest('.md-nav')) {
-            return;
-        }
-        
         // Store original content
         if (!this.originalContent.has(key)) {
             this.originalContent.set(key, element.textContent);
         }
         
         const originalText = this.originalContent.get(key);
-        if (originalText && originalText.trim() && !originalText.includes('<')) {
+        // Translate text content while preserving HTML structure
+        if (originalText && originalText.trim() && originalText.length > 0) {
             const translatedText = await this.translateText(originalText.trim(), targetLang);
-            element.textContent = translatedText;
+            // Only change the text content, not the HTML structure
+            if (element.childElementCount === 0) {
+                // No child elements, safe to replace text
+                element.textContent = translatedText;
+            } else {
+                // Has child elements, replace only text nodes
+                element.childNodes.forEach(node => {
+                    if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+                        node.textContent = translatedText;
+                    }
+                });
+            }
         }
 }
 
