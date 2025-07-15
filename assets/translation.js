@@ -32,6 +32,27 @@ class WikiTranslator {
         this.originalContent = new Map();
         this.init();
     }
+        saveCurrentLanguage() {
+            localStorage.setItem('coollife-wiki-language', this.currentLanguage);
+    }
+
+        loadSavedLanguage() {
+            const savedLang = localStorage.getItem('coollife-wiki-language');
+            if (savedLang && savedLang !== 'en') {
+                const language = this.euLanguages.find(lang => lang.code === savedLang);
+                if (language) {
+                    // Update UI to show saved language
+                    document.getElementById('currentLanguage').textContent = language.code.toUpperCase();
+                    document.getElementById('currentFlag').textContent = language.flag;
+                    this.currentLanguage = savedLang;
+                    
+                    // Auto-translate the page
+                    setTimeout(() => {
+                        this.translateContent(savedLang);
+                    }, 500);
+                }
+            }
+    }
 
     init() {
         if (document.readyState === 'loading') {
@@ -45,6 +66,7 @@ class WikiTranslator {
         console.log('Setting up WikiTranslator');
         this.addLanguageDropdown();
         this.setupEventListeners();
+        this.loadSavedLanguage();
     }
 
     addLanguageDropdown() {
@@ -118,6 +140,7 @@ class WikiTranslator {
         if (language.code !== this.currentLanguage) {
             await this.translateContent(language.code);
             this.currentLanguage = language.code;
+            this.saveCurrentLanguage();
         }
     }
 
@@ -161,8 +184,14 @@ class WikiTranslator {
         }
     }
 
-    async translateElement(element, targetLang) {
+        async translateElement(element, targetLang) {
         const key = this.getElementKey(element);
+        
+        // Skip elements that contain images or other media
+        if (element.querySelector('img, figure, iframe, video')) {
+            console.log('Skipping element with media content');
+            return;
+        }
         
         if (!this.originalContent.has(key)) {
             this.originalContent.set(key, element.textContent);
