@@ -184,7 +184,7 @@ class WikiTranslator {
         }
     }
 
-        async translateElement(element, targetLang) {
+    async translateElement(element, targetLang) {
         const key = this.getElementKey(element);
         
         // Skip elements that contain images or other media
@@ -193,6 +193,14 @@ class WikiTranslator {
             return;
         }
         
+        // Handle elements with links differently
+        if (element.querySelector('a')) {
+            console.log('Translating element with links');
+            await this.translateElementWithLinks(element, targetLang, key);
+            return;
+        }
+        
+        // Regular translation for elements without links
         if (!this.originalContent.has(key)) {
             this.originalContent.set(key, element.textContent);
         }
@@ -203,6 +211,53 @@ class WikiTranslator {
             const translatedText = await this.translateText(originalText.trim(), targetLang);
             console.log(`Result: "${translatedText}"`);
             element.textContent = translatedText;
+        }
+    }
+
+// ADD THIS NEW FUNCTION to handle elements with links:
+    async translateElementWithLinks(element, targetLang, key) {
+        if (!this.originalContent.has(key)) {
+            this.originalContent.set(key, element.innerHTML); // Store HTML, not just text
+        }
+        
+        // Get all text nodes that are not inside links
+        const walker = document.createTreeWalker(
+            element,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: function(node) {
+                    // Only translate text that's not inside a link
+                    return node.parentElement.tagName !== 'A' ? 
+                        NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+                }
+            }
+        );
+        
+        const textNodes = [];
+        let node;
+        while (node = walker.nextNode()) {
+            if (node.textContent.trim()) {
+                textNodes.push(node);
+            }
+        }
+        
+        // Translate each text node individually
+        for (const textNode of textNodes) {
+            const originalText = textNode.textContent.trim();
+            if (originalText && originalText.length > 1) {
+                const translatedText = await this.translateText(originalText, targetLang);
+                textNode.textContent = translatedText;
+            }
+        }
+        
+        // Also translate link text
+        const links = element.querySelectorAll('a');
+        for (const link of links) {
+            const linkText = link.textContent.trim();
+            if (linkText && linkText.length > 1) {
+                const translatedLinkText = await this.translateText(linkText, targetLang);
+                link.textContent = translatedLinkText;
+            }
         }
     }
 
@@ -249,7 +304,12 @@ class WikiTranslator {
         this.originalContent.forEach((content, key) => {
             const element = document.querySelector(`[data-translation-key="${key}"]`);
             if (element) {
-                element.textContent = content;
+                // Check if content contains HTML (links)
+                if (content.includes('<')) {
+                    element.innerHTML = content; // Restore HTML structure
+                } else {
+                    element.textContent = content; // Restore plain text
+                }
             }
         });
     }
