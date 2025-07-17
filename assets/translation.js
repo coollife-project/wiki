@@ -2,30 +2,30 @@
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
-            { code: 'en', name: 'English', flag: '🇬🇧' },
-            { code: 'bg', name: 'Български', flag: '🇧🇬' },
-            { code: 'hr', name: 'Hrvatski', flag: '🇭🇷' },
-            { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
-            { code: 'da', name: 'Dansk', flag: '🇩🇰' },
-            { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
-            { code: 'et', name: 'Eesti', flag: '🇪🇪' },
-            { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
-            { code: 'fr', name: 'Français', flag: '🇫🇷' },
-            { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-            { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
-            { code: 'hu', name: 'Magyar', flag: '🇭🇺' },
-            { code: 'ga', name: 'Gaeilge', flag: '🇮🇪' },
-            { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-            { code: 'lv', name: 'Latviešu', flag: '🇱🇻' },
-            { code: 'lt', name: 'Lietuvių', flag: '🇱🇹' },
-            { code: 'mt', name: 'Malti', flag: '🇲🇹' },
-            { code: 'pl', name: 'Polski', flag: '🇵🇱' },
-            { code: 'pt', name: 'Português', flag: '🇵🇹' },
-            { code: 'ro', name: 'Română', flag: '🇷🇴' },
-            { code: 'sk', name: 'Slovenčina', flag: '🇸🇰' },
-            { code: 'sl', name: 'Slovenščina', flag: '🇸🇮' },
-            { code: 'es', name: 'Español', flag: '🇪🇸' },
-            { code: 'sv', name: 'Svenska', flag: '🇸🇪' }
+            { code: 'en', name: 'English', flag: '\uD83C\uDDEC\uD83C\uDDE7' }, // 🇬🇧
+            { code: 'bg', name: 'Български', flag: '\uD83C\uDDE7\uD83C\uDDEC' }, // 🇧🇬
+            { code: 'hr', name: 'Hrvatski', flag: '\uD83C\uDDED\uD83C\uDDF7' }, // 🇭🇷
+            { code: 'cs', name: 'Čeština', flag: '\uD83C\uDDE8\uD83C\uDDFF' }, // 🇨🇿
+            { code: 'da', name: 'Dansk', flag: '\uD83C\uDDE9\uD83C\uDDF0' }, // 🇩🇰
+            { code: 'nl', name: 'Nederlands', flag: '\uD83C\uDDF3\uD83C\uDDF1' }, // 🇳🇱
+            { code: 'et', name: 'Eesti', flag: '\uD83C\uDDEA\uD83C\uDDEA' }, // 🇪🇪
+            { code: 'fi', name: 'Suomi', flag: '\uD83C\uDDEB\uD83C\uDDEE' }, // 🇫🇮
+            { code: 'fr', name: 'Français', flag: '\uD83C\uDDEB\uD83C\uDDF7' }, // 🇫🇷
+            { code: 'de', name: 'Deutsch', flag: '\uD83C\uDDE9\uD83C\uDDEA' }, // 🇩🇪
+            { code: 'el', name: 'Ελληνικά', flag: '\uD83C\uDDEC\uD83C\uDDF7' }, // 🇬🇷
+            { code: 'hu', name: 'Magyar', flag: '\uD83C\uDDED\uD83C\uDDFA' }, // 🇭🇺
+            { code: 'ga', name: 'Gaeilge', flag: '\uD83C\uDDEE\uD83C\uDDEA' }, // 🇮🇪
+            { code: 'it', name: 'Italiano', flag: '\uD83C\uDDEE\uD83C\uDDF9' }, // 🇮🇹
+            { code: 'lv', name: 'Latviešu', flag: '\uD83C\uDDF1\uD83C\uDDFB' }, // 🇱🇻
+            { code: 'lt', name: 'Lietuvių', flag: '\uD83C\uDDF1\uD83C\uDDF9' }, // 🇱🇹
+            { code: 'mt', name: 'Malti', flag: '\uD83C\uDDF2\uD83C\uDDF9' }, // 🇲🇹
+            { code: 'pl', name: 'Polski', flag: '\uD83C\uDDF5\uD83C\uDDF1' }, // 🇵🇱
+            { code: 'pt', name: 'Português', flag: '\uD83C\uDDF5\uD83C\uDDF9' }, // 🇵🇹
+            { code: 'ro', name: 'Română', flag: '\uD83C\uDDF7\uD83C\uDDF4' }, // 🇷🇴
+            { code: 'sk', name: 'Slovenčina', flag: '\uD83C\uDDF8\uD83C\uDDF0' }, // 🇸🇰
+            { code: 'sl', name: 'Slovenščina', flag: '\uD83C\uDDF8\uD83C\uDDEE' }, // 🇸🇮
+            { code: 'es', name: 'Español', flag: '\uD83C\uDDEA\uD83C\uDDF8' }, // 🇪🇸
+            { code: 'sv', name: 'Svenska', flag: '\uD83C\uDDF8\uD83C\uDDEA' } // 🇸🇪
         ];
         
         this.currentLanguage = 'en';
@@ -41,9 +41,9 @@ class WikiTranslator {
             if (savedLang && savedLang !== 'en') {
                 const language = this.euLanguages.find(lang => lang.code === savedLang);
                 if (language) {
-                    // Update UI to show saved language
-                    document.getElementById('currentLanguage').textContent = language.code.toUpperCase();
+                    // Update UI to show saved language flag and name
                     document.getElementById('currentFlag').textContent = language.flag;
+                    document.getElementById('currentLanguage').textContent = language.name;
                     this.currentLanguage = savedLang;
                     
                     // Auto-translate the page
@@ -71,8 +71,8 @@ class WikiTranslator {
 
     addLanguageDropdown() {
         const header = document.querySelector('.md-header__inner') || 
-                      document.querySelector('.md-header') ||
-                      document.querySelector('header');
+                    document.querySelector('.md-header') ||
+                    document.querySelector('header');
         
         console.log('Header found:', header);
         
@@ -85,14 +85,14 @@ class WikiTranslator {
             <div class="language-dropdown">
                 <button class="language-button" id="languageButton">
                     <span id="currentFlag">🇬🇧</span>
-                    <span id="currentLanguage">EN</span>
+                    <span id="currentLanguage">English</span>
                     <span class="arrow">▼</span>
                 </button>
                 <div class="language-menu" id="languageMenu">
                     ${this.euLanguages.map(lang => `
                         <div class="language-option" data-code="${lang.code}">
-                            <span>${lang.flag}</span>
-                            <span>${lang.name}</span>
+                            <span class="flag-menu">${lang.flag}</span>
+                            <span class="language-name">${lang.name}</span>
                         </div>
                     `).join('')}
                 </div>
@@ -133,7 +133,7 @@ class WikiTranslator {
     }
 
     async selectLanguage(language) {
-        document.getElementById('currentLanguage').textContent = language.code.toUpperCase();
+        document.getElementById('currentLanguage').textContent = language.name; // Show full name
         document.getElementById('currentFlag').textContent = language.flag;
         document.getElementById('languageMenu').style.display = 'none';
         
