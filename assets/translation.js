@@ -1,15 +1,4 @@
 // EU Language Translation for CoolLIFE Wiki
-function googleTranslateElementInit() {
-  new google.translate.TranslateElement(
-    {
-      pageLanguage: 'en',
-      includedLanguages: 'bg,hr,cs,da,nl,et,fi,fr,de,el,hu,ga,it,lv,lt,mt,pl,pt,ro,sk,sl,es,sv',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
-    },
-    'google_translate_container'
-  );
-}
-
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -36,33 +25,29 @@ class WikiTranslator {
             { code: 'sk', name: 'Slovenčina', flag: '\uD83C\uDDF8\uD83C\uDDF0' }, // 🇸🇰
             { code: 'sl', name: 'Slovenščina', flag: '\uD83C\uDDF8\uD83C\uDDEE' }, // 🇸🇮
             { code: 'es', name: 'Español', flag: '\uD83C\uDDEA\uD83C\uDDF8' }, // 🇪🇸
-            { code: 'sv', name: 'Svenska', flag: '\uD83C\uDDF8\uD83C\uDDEA' } // 🇸🇪
+            { code: 'sv', name: 'Svenska', flag: '\uD83C\uDDF8\uD83C\uDDEA' }  // 🇸🇪
         ];
         
         this.currentLanguage = 'en';
         this.originalContent = new Map();
         this.init();
     }
-        saveCurrentLanguage() {
-            localStorage.setItem('coollife-wiki-language', this.currentLanguage);
+
+    saveCurrentLanguage() {
+        localStorage.setItem('coollife-wiki-language', this.currentLanguage);
     }
 
-        loadSavedLanguage() {
-            const savedLang = localStorage.getItem('coollife-wiki-language');
-            if (savedLang && savedLang !== 'en') {
-                const language = this.euLanguages.find(lang => lang.code === savedLang);
-                if (language) {
-                    // Update UI to show saved language flag and name
-                    document.getElementById('currentFlag').textContent = language.flag;
-                    document.getElementById('currentLanguage').textContent = language.name;
-                    this.currentLanguage = savedLang;
-                    
-                    // Auto-translate the page
-                    setTimeout(() => {
-                        this.translateContent(savedLang);
-                    }, 500);
-                }
+    loadSavedLanguage() {
+        const savedLang = localStorage.getItem('coollife-wiki-language');
+        if (savedLang && savedLang !== 'en') {
+            const language = this.euLanguages.find(lang => lang.code === savedLang);
+            if (language) {
+                document.getElementById('currentFlag').textContent = language.flag;
+                document.getElementById('currentLanguage').textContent = language.name;
+                this.currentLanguage = savedLang;
+                setTimeout(() => this.translateContent(savedLang), 500);
             }
+        }
     }
 
     init() {
@@ -82,11 +67,8 @@ class WikiTranslator {
 
     addLanguageDropdown() {
         const header = document.querySelector('.md-header__inner') || 
-                    document.querySelector('.md-header') ||
-                    document.querySelector('header');
-        
-        console.log('Header found:', header);
-        
+                       document.querySelector('.md-header') ||
+                       document.querySelector('header');
         if (!header) {
             console.warn('Could not find header element');
             return;
@@ -104,14 +86,11 @@ class WikiTranslator {
                         <div class="language-option" data-code="${lang.code}">
                             <span class="flag-menu">${lang.flag}</span>
                             <span class="language-name">${lang.name}</span>
-                        </div>
-                    `).join('')}
+                        </div>`).join('')}
                 </div>
             </div>
         `;
-
         header.insertAdjacentHTML('beforeend', dropdownHTML);
-        console.log('Language dropdown added');
     }
 
     setupEventListeners() {
@@ -131,9 +110,7 @@ class WikiTranslator {
                 if (option) {
                     const code = option.dataset.code;
                     const lang = this.euLanguages.find(l => l.code === code);
-                    if (lang) {
-                        this.selectLanguage(lang);
-                    }
+                    if (lang) this.selectLanguage(lang);
                 }
             });
         }
@@ -144,7 +121,7 @@ class WikiTranslator {
     }
 
     async selectLanguage(language) {
-        document.getElementById('currentLanguage').textContent = language.name; // Show full name
+        document.getElementById('currentLanguage').textContent = language.name;
         document.getElementById('currentFlag').textContent = language.flag;
         document.getElementById('languageMenu').style.display = 'none';
         
@@ -180,8 +157,6 @@ class WikiTranslator {
 
             for (const selector of selectors) {
                 const elements = document.querySelectorAll(selector);
-                console.log(`Found ${elements.length} elements for selector: ${selector}`);
-                
                 for (const element of elements) {
                     if (element.closest('.language-dropdown')) continue;
                     await this.translateElement(element, targetLang);
@@ -197,62 +172,39 @@ class WikiTranslator {
 
     async translateElement(element, targetLang) {
         const key = this.getElementKey(element);
-        
-        // Skip elements that contain images or other media
-        if (element.querySelector('img, figure, iframe, video')) {
-            console.log('Skipping element with media content');
-            return;
-        }
-        
-        // Handle elements with links differently
+        if (element.querySelector('img, figure, iframe, video')) return;
+
         if (element.querySelector('a')) {
-            console.log('Translating element with links');
             await this.translateElementWithLinks(element, targetLang, key);
             return;
         }
-        
-        // Regular translation for elements without links
+
         if (!this.originalContent.has(key)) {
             this.originalContent.set(key, element.textContent);
         }
-        
+
         const originalText = this.originalContent.get(key);
         if (originalText && originalText.trim() && originalText.length > 1) {
-            console.log(`Translating: "${originalText}"`);
             const translatedText = await this.translateText(originalText.trim(), targetLang);
-            console.log(`Result: "${translatedText}"`);
             element.textContent = translatedText;
         }
     }
 
-// ADD THIS NEW FUNCTION to handle elements with links:
     async translateElementWithLinks(element, targetLang, key) {
         if (!this.originalContent.has(key)) {
-            this.originalContent.set(key, element.innerHTML); // Store HTML, not just text
+            this.originalContent.set(key, element.innerHTML);
         }
-        
-        // Get all text nodes that are not inside links
-        const walker = document.createTreeWalker(
-            element,
-            NodeFilter.SHOW_TEXT,
-            {
-                acceptNode: function(node) {
-                    // Only translate text that's not inside a link
-                    return node.parentElement.tagName !== 'A' ? 
-                        NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
-                }
-            }
-        );
-        
+
+        const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, {
+            acceptNode: (node) => node.parentElement.tagName !== 'A' ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT
+        });
+
         const textNodes = [];
         let node;
         while (node = walker.nextNode()) {
-            if (node.textContent.trim()) {
-                textNodes.push(node);
-            }
+            if (node.textContent.trim()) textNodes.push(node);
         }
-        
-        // Translate each text node individually
+
         for (const textNode of textNodes) {
             const originalText = textNode.textContent.trim();
             if (originalText && originalText.length > 1) {
@@ -260,8 +212,7 @@ class WikiTranslator {
                 textNode.textContent = translatedText;
             }
         }
-        
-        // Also translate link text
+
         const links = element.querySelectorAll('a');
         for (const link of links) {
             const linkText = link.textContent.trim();
@@ -272,27 +223,21 @@ class WikiTranslator {
         }
     }
 
-    // Replace ONLY this function
+    // ✅ FREE MyMemory translation API
     async translateText(text, targetLang) {
-        if (targetLang === 'en' || !text.trim()) {
-            return text;
+        if (targetLang === 'en' || !text.trim()) return text;
+
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            if (data?.responseData?.translatedText) {
+                console.log(`Translated: ${text} → ${data.responseData.translatedText}`);
+                return data.responseData.translatedText;
+            }
+        } catch (e) {
+            console.error('Translation error:', e);
         }
-
-        // Find Google Translate widget <select> created by the free script
-        const select = document.querySelector('.goog-te-combo');
-
-        if (!select) {
-            console.warn('⚠️ Google Translate widget not initialized yet.');
-            return text;
-        }
-
-        // Trigger translation through Google Translate’s free element
-        select.value = targetLang;
-        select.dispatchEvent(new Event('change'));
-
-        console.log(`🌍 Triggered free translation to ${targetLang}.`);
-
-        // Free widget handles text changes automatically, so just return original text
         return text;
     }
 
@@ -300,12 +245,8 @@ class WikiTranslator {
         this.originalContent.forEach((content, key) => {
             const element = document.querySelector(`[data-translation-key="${key}"]`);
             if (element) {
-                // Check if content contains HTML (links)
-                if (content.includes('<')) {
-                    element.innerHTML = content; // Restore HTML structure
-                } else {
-                    element.textContent = content; // Restore plain text
-                }
+                if (content.includes('<')) element.innerHTML = content;
+                else element.textContent = content;
             }
         });
     }
@@ -333,8 +274,6 @@ class WikiTranslator {
         const indicator = document.getElementById('translationLoader');
         if (indicator) indicator.remove();
     }
-
-
 }
 
 // Initialize translator
