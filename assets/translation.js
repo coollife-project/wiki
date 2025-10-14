@@ -1,4 +1,4 @@
-// 🌍 Full Website Translator for CoolLIFE Wiki
+// ⚡ Optimized Full-Page Translator for CoolLIFE Wiki (MyMemory API)
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -29,8 +29,9 @@ class WikiTranslator {
         ];
 
         this.currentLanguage = 'en';
-        this.originalTexts = [];
+        this.cache = new Map();
         this.textNodes = [];
+        this.originalTexts = [];
         this.init();
     }
 
@@ -120,6 +121,7 @@ class WikiTranslator {
         }
     }
 
+    // 🧠 Core: full-page translation optimized for MyMemory API
     async translateWholePage(targetLang) {
         if (targetLang === 'en') {
             this.restoreOriginalTexts();
@@ -129,12 +131,15 @@ class WikiTranslator {
         this.showLoadingIndicator();
 
         try {
-            // Collect text nodes
+            // Collect text nodes (visible, non-empty)
             const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
                 acceptNode: node => {
-                    const text = node.nodeValue.trim();
-                    if (!text) return NodeFilter.FILTER_REJECT;
-                    if (node.parentNode && node.parentNode.closest('.language-dropdown')) return NodeFilter.FILTER_REJECT;
+                    const txt = node.nodeValue.trim();
+                    if (!txt) return NodeFilter.FILTER_REJECT;
+                    const parent = node.parentNode;
+                    if (!parent || parent.closest('.language-dropdown')) return NodeFilter.FILTER_REJECT;
+                    const style = parent.nodeType === 1 ? window.getComputedStyle(parent) : null;
+                    if (style && (style.display === 'none' || style.visibility === 'hidden')) return NodeFilter.FILTER_REJECT;
                     return NodeFilter.FILTER_ACCEPT;
                 }
             });
@@ -148,15 +153,40 @@ class WikiTranslator {
                 this.originalTexts.push(node.nodeValue);
             }
 
-            const joined = this.originalTexts.join('\n<<<SEP>>>\n');
-            const translations = await this.fetchTranslation(joined, targetLang);
+            // Deduplicate and prepare text for translation
+            const uniqueTexts = [...new Set(this.originalTexts)];
+            const translationsMap = new Map();
 
-            if (translations) {
-                const parts = translations.split('\n<<<SEP>>>\n');
-                this.textNodes.forEach((node, i) => {
-                    if (parts[i]) node.nodeValue = parts[i];
-                });
+            // Use cache first
+            for (const text of uniqueTexts) {
+                if (this.cache.has(text)) translationsMap.set(text, this.cache.get(text));
             }
+
+            // Filter what still needs translation
+            const toTranslate = uniqueTexts.filter(t => !translationsMap.has(t));
+            if (toTranslate.length === 0) {
+                this.applyTranslations(translationsMap);
+                this.hideLoadingIndicator();
+                return;
+            }
+
+            // Batch requests respecting MyMemory 5000-char limit
+            const batches = this.chunkByLength(toTranslate, 4800);
+            for (const batch of batches) {
+                const joined = batch.join('\n<<<SEP>>>\n');
+                const translated = await this.safeFetchTranslation(joined, targetLang);
+                if (!translated) continue;
+                const parts = translated.split('\n<<<SEP>>>\n');
+                batch.forEach((t, i) => {
+                    translationsMap.set(t, parts[i] || t);
+                    this.cache.set(t, parts[i] || t);
+                });
+                // progressive update for user feedback
+                this.applyTranslations(translationsMap);
+                await this.sleep(1000); // respect ~1req/sec limit
+            }
+
+            this.applyTranslations(translationsMap);
         } catch (err) {
             console.error('Translation failed:', err);
             alert('Translation failed. Please try again.');
@@ -165,17 +195,48 @@ class WikiTranslator {
         }
     }
 
-    async fetchTranslation(text, targetLang) {
+    // 🧩 Efficient text replacement
+    applyTranslations(translationsMap) {
+        this.textNodes.forEach((node, i) => {
+            const original = this.originalTexts[i];
+            if (translationsMap.has(original)) {
+                node.nodeValue = translationsMap.get(original);
+            }
+        });
+    }
+
+    async safeFetchTranslation(text, targetLang) {
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        return data?.responseData?.translatedText || null;
+        try {
+            const res = await fetch(url);
+            const data = await res.json();
+            return data?.responseData?.translatedText || null;
+        } catch (e) {
+            console.error('API error:', e);
+            return null;
+        }
+    }
+
+    chunkByLength(texts, maxLen) {
+        const batches = [];
+        let batch = [], len = 0;
+        for (const t of texts) {
+            const l = t.length + 13; // separator + margin
+            if (len + l > maxLen && batch.length > 0) {
+                batches.push(batch);
+                batch = [];
+                len = 0;
+            }
+            batch.push(t);
+            len += l;
+        }
+        if (batch.length) batches.push(batch);
+        return batches;
     }
 
     restoreOriginalTexts() {
-        if (!this.textNodes.length) return;
         this.textNodes.forEach((node, i) => {
-            if (this.originalTexts[i]) node.nodeValue = this.originalTexts[i];
+            node.nodeValue = this.originalTexts[i];
         });
     }
 
@@ -185,7 +246,7 @@ class WikiTranslator {
         loader.innerHTML = `
             <div class="translation-loader">
                 <div class="loader-spinner"></div>
-                <span>Translating entire website...</span>
+                <span>Translating full page…</span>
             </div>`;
         document.body.appendChild(loader);
     }
@@ -193,6 +254,10 @@ class WikiTranslator {
     hideLoadingIndicator() {
         const loader = document.getElementById('translationLoader');
         if (loader) loader.remove();
+    }
+
+    sleep(ms) {
+        return new Promise(r => setTimeout(r, ms));
     }
 }
 
