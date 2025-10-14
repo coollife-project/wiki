@@ -52,15 +52,9 @@ li {
     line-height: 1;
 }
 
-#currentFlag {
-    font-size: 1.1rem;
-    line-height: 1;
-    position: relative;
-    top: 1px; /* adjust for perfect visual baseline */
-}
 
 .language-button #currentFlag {
-    font-size: 1.1rem;
+    font-size: 1rem;
 }
 
 .language-button #currentLanguage {
