@@ -56,6 +56,17 @@ li {
     font-size: 0.85rem;
     font-weight: 500;
 }
+.language-button span {
+    display: inline-flex;
+    align-items: flex-end;
+    line-height: 1;
+}
+
+#currentFlag, 
+#currentLanguage {
+    vertical-align: bottom;
+}
+
 
 .arrow {
     font-size: 0.7rem;
