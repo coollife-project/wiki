@@ -1,4 +1,15 @@
 // EU Language Translation for CoolLIFE Wiki
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement(
+    {
+      pageLanguage: 'en',
+      includedLanguages: 'bg,hr,cs,da,nl,et,fi,fr,de,el,hu,ga,it,lv,lt,mt,pl,pt,ro,sk,sl,es,sv',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    },
+    'google_translate_container'
+  );
+}
+
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -261,43 +272,28 @@ class WikiTranslator {
         }
     }
 
+    // Replace ONLY this function
     async translateText(text, targetLang) {
-        const GOOGLE_API_KEY = ''; // Replace with your new restricted key
-        
         if (targetLang === 'en' || !text.trim()) {
             return text;
         }
 
-        try {
-            console.log(`🌍 Translating "${text}" to ${targetLang}`);
-            
-            const response = await fetch(`https://translation.googleapis.com/language/translate/v2?key=${GOOGLE_API_KEY}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    q: text,
-                    source: 'en',
-                    target: targetLang,
-                    format: 'text'
-                })
-            });
+        // Find Google Translate widget <select> created by the free script
+        const select = document.querySelector('.goog-te-combo');
 
-            if (response.ok) {
-                const data = await response.json();
-                const translatedText = data.data.translations[0].translatedText;
-                console.log(`✅ Google Translate: "${translatedText}"`);
-                return translatedText;
-            } else {
-                const errorData = await response.json();
-                console.error('❌ Google Translate API error:', response.status, errorData);
-                return text;
-            }
-        } catch (error) {
-            console.error('❌ Translation failed:', error);
+        if (!select) {
+            console.warn('⚠️ Google Translate widget not initialized yet.');
             return text;
         }
+
+        // Trigger translation through Google Translate’s free element
+        select.value = targetLang;
+        select.dispatchEvent(new Event('change'));
+
+        console.log(`🌍 Triggered free translation to ${targetLang}.`);
+
+        // Free widget handles text changes automatically, so just return original text
+        return text;
     }
 
     restoreOriginalContent() {
@@ -337,6 +333,8 @@ class WikiTranslator {
         const indicator = document.getElementById('translationLoader');
         if (indicator) indicator.remove();
     }
+
+
 }
 
 // Initialize translator
