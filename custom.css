@@ -55,6 +55,7 @@ li {
 
 .language-button #currentFlag {
     font-size: 1rem;
+    margin-bottom: 10%;
 }
 
 .language-button #currentLanguage {
