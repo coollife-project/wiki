@@ -130,16 +130,7 @@ li {
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }
-/* Flag font support */
-.language-button, .language-option {
-    font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", sans-serif;
-}
 
-.flag-menu, #currentFlag {
-    font-size: 1.2em;
-    line-height: 1;
-    margin-right: 0.5rem;
-}
 
 @keyframes spin {
     0% { transform: rotate(0deg); }
