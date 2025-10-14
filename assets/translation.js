@@ -262,7 +262,7 @@ class WikiTranslator {
     }
 
     async translateText(text, targetLang) {
-        const GOOGLE_API_KEY = ''; // Replace with your new restricted key
+        const GOOGLE_API_KEY = 'AIzaSyDXeNiXYoHsugjBY0GjDF5R0NQF_sq_5lU'; // Replace with your new restricted key
         
         if (targetLang === 'en' || !text.trim()) {
             return text;
