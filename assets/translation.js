@@ -1,4 +1,5 @@
 // ⚡ Optimized Full-Page Translator for CoolLIFE Wiki (MyMemory API)
+// ✅ Includes Top Progress Bar Loader (non-blocking)
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -32,6 +33,7 @@ class WikiTranslator {
         this.cache = new Map();
         this.textNodes = [];
         this.originalTexts = [];
+        this.progressInterval = null;
         this.init();
     }
 
@@ -172,6 +174,9 @@ class WikiTranslator {
 
             // Batch requests respecting MyMemory 5000-char limit
             const batches = this.chunkByLength(toTranslate, 4800);
+            const totalBatches = batches.length;
+            let completed = 0;
+
             for (const batch of batches) {
                 const joined = batch.join('\n<<<SEP>>>\n');
                 const translated = await this.safeFetchTranslation(joined, targetLang);
@@ -181,12 +186,15 @@ class WikiTranslator {
                     translationsMap.set(t, parts[i] || t);
                     this.cache.set(t, parts[i] || t);
                 });
-                // progressive update for user feedback
+                completed++;
+                this.updateProgress((completed / totalBatches) * 100);
+                // progressive update
                 this.applyTranslations(translationsMap);
-                await this.sleep(1000); // respect ~1req/sec limit
+                await this.sleep(1000); // ~1 req/sec safety
             }
 
             this.applyTranslations(translationsMap);
+            this.updateProgress(100);
         } catch (err) {
             console.error('Translation failed:', err);
             alert('Translation failed. Please try again.');
@@ -195,7 +203,6 @@ class WikiTranslator {
         }
     }
 
-    // 🧩 Efficient text replacement
     applyTranslations(translationsMap) {
         this.textNodes.forEach((node, i) => {
             const original = this.originalTexts[i];
@@ -221,7 +228,7 @@ class WikiTranslator {
         const batches = [];
         let batch = [], len = 0;
         for (const t of texts) {
-            const l = t.length + 13; // separator + margin
+            const l = t.length + 13; // separator margin
             if (len + l > maxLen && batch.length > 0) {
                 batches.push(batch);
                 batch = [];
@@ -240,20 +247,41 @@ class WikiTranslator {
         });
     }
 
+    // ✅ Top progress bar loader (non-blocking)
     showLoadingIndicator() {
-        const loader = document.createElement('div');
-        loader.id = 'translationLoader';
-        loader.innerHTML = `
-            <div class="translation-loader">
-                <div class="loader-spinner"></div>
-                <span>Translating full page…</span>
-            </div>`;
-        document.body.appendChild(loader);
+        const bar = document.createElement('div');
+        bar.id = 'translationProgress';
+        Object.assign(bar.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '0%',
+            height: '3px',
+            background: '#09f',
+            zIndex: '9999',
+            transition: 'width 0.3s ease'
+        });
+        document.body.appendChild(bar);
+
+        let progress = 0;
+        this.progressInterval = setInterval(() => {
+            progress = Math.min(progress + Math.random() * 10, 90);
+            bar.style.width = progress + '%';
+        }, 300);
+    }
+
+    updateProgress(percent) {
+        const bar = document.getElementById('translationProgress');
+        if (bar) bar.style.width = `${Math.min(percent, 100)}%`;
     }
 
     hideLoadingIndicator() {
-        const loader = document.getElementById('translationLoader');
-        if (loader) loader.remove();
+        const bar = document.getElementById('translationProgress');
+        if (bar) {
+            bar.style.width = '100%';
+            setTimeout(() => bar.remove(), 500);
+        }
+        clearInterval(this.progressInterval);
     }
 
     sleep(ms) {
