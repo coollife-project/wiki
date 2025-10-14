@@ -1,5 +1,5 @@
-// ⚡ Optimized Full-Page Translator for CoolLIFE Wiki (MyMemory API)
-// ✅ Includes Top Progress Bar Loader (non-blocking)
+// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
+// ✅ Top progress bar only – no centered overlay
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -65,6 +65,17 @@ class WikiTranslator {
         this.addLanguageDropdown();
         this.setupEventListeners();
         this.loadSavedLanguage();
+
+        // 🧹 Ensure any old overlay is hidden
+        const style = document.createElement('style');
+        style.textContent = `
+            #translationLoader, .translation-loader {
+                display: none !important;
+                visibility: hidden !important;
+                opacity: 0 !important;
+            }
+        `;
+        document.head.appendChild(style);
     }
 
     addLanguageDropdown() {
@@ -164,7 +175,6 @@ class WikiTranslator {
                 if (this.cache.has(text)) translationsMap.set(text, this.cache.get(text));
             }
 
-            // Filter what still needs translation
             const toTranslate = uniqueTexts.filter(t => !translationsMap.has(t));
             if (toTranslate.length === 0) {
                 this.applyTranslations(translationsMap);
@@ -188,9 +198,8 @@ class WikiTranslator {
                 });
                 completed++;
                 this.updateProgress((completed / totalBatches) * 100);
-                // progressive update
                 this.applyTranslations(translationsMap);
-                await this.sleep(1000); // ~1 req/sec safety
+                await this.sleep(1000); // ~1 req/sec
             }
 
             this.applyTranslations(translationsMap);
@@ -228,7 +237,7 @@ class WikiTranslator {
         const batches = [];
         let batch = [], len = 0;
         for (const t of texts) {
-            const l = t.length + 13; // separator margin
+            const l = t.length + 13;
             if (len + l > maxLen && batch.length > 0) {
                 batches.push(batch);
                 batch = [];
@@ -247,8 +256,12 @@ class WikiTranslator {
         });
     }
 
-    // ✅ Top progress bar loader (non-blocking)
+    // ✅ Top progress bar loader – removes old overlay automatically
     showLoadingIndicator() {
+        // Remove any old overlay from previous versions
+        const old = document.querySelector('#translationLoader, .translation-loader');
+        if (old) old.remove();
+
         const bar = document.createElement('div');
         bar.id = 'translationProgress';
         Object.assign(bar.style, {
@@ -289,4 +302,5 @@ class WikiTranslator {
     }
 }
 
+// Initialize
 new WikiTranslator();
