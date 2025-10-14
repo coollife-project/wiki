@@ -84,6 +84,7 @@ class WikiTranslator {
                 <div class="language-menu" id="languageMenu">
                     ${this.euLanguages.map(lang => `
                         <div class="language-option" data-code="${lang.code}">
+                            <span class="flag-menu">${lang.flag}</span>
                             <span class="language-name">${lang.name}</span>
                         </div>`).join('')}
                 </div>
