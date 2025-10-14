@@ -1,3 +1,5 @@
+/* ---------- General tweaks ---------- */
+
 .md-content__button::after {
     content: "Edit page";
 }
@@ -22,40 +24,54 @@ ul, ol {
 li {
     margin-bottom: 0.5em;
 }
-/* Add this to the END of your existing custom.css file */
 
-/* Language Dropdown Styles */
+/* ---------- Language Dropdown Styles ---------- */
+
 .language-dropdown {
     position: relative;
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
     margin-left: 1rem;
-    max-width: 150px; 
-
+    max-width: 150px;
 }
 
+/* Make sure header uses flex and aligns its items vertically */
+.md-header__inner,
+.md-header {
+    display: flex;
+    align-items: center;
+}
+
+/* Dropdown button */
 .language-button {
     background-color: var(--md-primary-fg-color);
     color: var(--md-primary-bg-color);
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.9rem;
     border-radius: 0.25rem;
     cursor: pointer;
     font-size: 0.8rem;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    min-width: 150px; /* Wider to accommodate flag + name */
+    min-width: 150px;
+    height: 100%;
     transition: background-color 0.2s;
 }
 
-.language-button span {
-    line-height: 1;
+/* Hover color */
+.language-button:hover {
+    background-color: var(--md-primary-fg-color--light);
 }
 
-
+/* Flag + text + arrow styling */
 .language-button #currentFlag {
     font-size: 1rem;
-    margin-bottom: 10%;
+    line-height: 1;
+    position: relative;
+    top: 1px; /* fine-tune vertical centering */
 }
 
 .language-button #currentLanguage {
@@ -63,27 +79,19 @@ li {
     font-weight: 500;
 }
 
-.arrow {
+.language-button .arrow {
     font-size: 0.7rem;
     margin-left: auto;
     opacity: 0.8;
 }
-.language-button:hover {
-    background-color: var(--md-primary-fg-color--light);
-}
 
-.language-button .arrow {
-    font-size: 0.7rem;
-    margin-left: auto;
-}
-
+/* Dropdown menu */
 .language-menu {
     display: none;
     position: absolute;
     background-color: var(--md-default-bg-color);
     min-width: 200px;
-    max-width: 250px; /* Add this */
-
+    max-width: 250px;
     box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
     z-index: 1000;
     border-radius: 0.25rem;
@@ -94,6 +102,7 @@ li {
     border: 1px solid var(--md-default-fg-color--lightest);
 }
 
+/* Each language item */
 .language-option {
     padding: 0.75rem 1rem;
     cursor: pointer;
@@ -113,40 +122,29 @@ li {
     border-bottom: none;
 }
 
-.translation-loader {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: var(--md-default-bg-color);
-    padding: 2rem;
-    border-radius: 0.5rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-    z-index: 10000;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.loader-spinner {
-    width: 20px;
-    height: 20px;
-    border: 2px solid var(--md-primary-fg-color--light);
-    border-top: 2px solid var(--md-primary-fg-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-/* Flag font support */
-.language-button, .language-option {
+/* ---------- Flag Font Support ---------- */
+.language-button,
+.language-option {
     font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", "Android Emoji", sans-serif;
 }
 
-.flag-menu, #currentFlag {
+.flag-menu,
+#currentFlag {
     font-size: 1.2em;
     line-height: 1;
     margin-right: 0.5rem;
 }
 
+/* ---------- Legacy Loader (Hidden) ---------- */
+/* Ensures old centered overlay never appears again */
+#translationLoader,
+.translation-loader {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Old spinner animation (kept for reference, unused) */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
