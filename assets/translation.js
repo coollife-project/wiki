@@ -1,5 +1,5 @@
 // ======================
-// 🌍 WikiTranslator Free Version (MkDocs)
+// 🌍 WikiTranslator Free Version (MkDocs-ready)
 // ======================
 
 function googleTranslateElementInit() {
@@ -54,14 +54,36 @@ class WikiTranslator {
   }
 
   setup() {
-    this.addLanguageDropdown();
-    this.setupEventListeners();
-    this.loadSavedLanguage();
+    this.waitForHeader(() => {
+      this.addLanguageDropdown();
+      this.setupEventListeners();
+      this.loadSavedLanguage();
+    });
+  }
+
+  waitForHeader(callback) {
+    const tryFindHeader = () => {
+      const header =
+        document.querySelector('.md-header__topic') ||
+        document.querySelector('.md-header__inner') ||
+        document.querySelector('.md-header__title') ||
+        document.querySelector('.md-header') ||
+        document.querySelector('header');
+
+      if (header) {
+        callback(header);
+      } else {
+        setTimeout(tryFindHeader, 300);
+      }
+    };
+    tryFindHeader();
   }
 
   addLanguageDropdown() {
     const header =
+      document.querySelector('.md-header__topic') ||
       document.querySelector('.md-header__inner') ||
+      document.querySelector('.md-header__title') ||
       document.querySelector('.md-header') ||
       document.querySelector('header');
     if (!header) return;
@@ -74,20 +96,24 @@ class WikiTranslator {
           <span class="arrow">▼</span>
         </button>
         <div class="language-menu" id="languageMenu">
-          ${this.euLanguages
-            .map(
-              (lang) => `
+          ${this.euLanguages.map(lang => `
             <div class="language-option" data-code="${lang.code}">
               <span class="flag-menu">${lang.flag}</span>
               <span class="language-name">${lang.name}</span>
-            </div>`
-            )
-            .join('')}
+            </div>`).join('')}
         </div>
       </div>
       <div id="google_translate_container" style="display:none;"></div>
     `;
-    header.insertAdjacentHTML('beforeend', dropdownHTML);
+
+    // Place dropdown near the theme toggle if it exists
+    const themeToggle = document.querySelector('.md-header__button[title*="theme"], .md-header__button[aria-label*="theme"]');
+    if (themeToggle && themeToggle.parentElement) {
+      themeToggle.parentElement.insertAdjacentHTML('beforebegin', dropdownHTML);
+    } else {
+      header.insertAdjacentHTML('beforeend', dropdownHTML);
+    }
+    console.log("✅ Language dropdown added");
   }
 
   setupEventListeners() {
