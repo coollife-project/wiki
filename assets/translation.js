@@ -1,8 +1,8 @@
 // ============================
-// 🌍 CoolLIFE Wiki Free Translation System
+// 🌍 CoolLIFE Wiki Free Translation System (Final Guaranteed)
 // ============================
 
-// Load the free Google Translate widget (silent)
+// Load the free Google Translate widget
 function googleTranslateElementInit() {
   new google.translate.TranslateElement(
     {
@@ -48,34 +48,43 @@ class WikiTranslator {
     ];
 
     this.currentLanguage = 'en';
-    this.init();
+    this.start();
   }
 
-  // ========== INIT ==========
-  init() {
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.setup());
-    } else {
-      this.setup();
-    }
+  start() {
+    this.waitForHeader(() => {
+      this.addLanguageDropdown();
+      this.setupEventListeners();
+      this.loadSavedLanguage();
+    });
   }
 
-  setup() {
-    console.log('🔧 Setting up WikiTranslator...');
-    this.addLanguageDropdown();
-    this.setupEventListeners();
-    this.loadSavedLanguage();
+  // Wait until MkDocs header is ready
+  waitForHeader(callback) {
+    const checkHeader = () => {
+      const header =
+        document.querySelector('.md-header__inner') ||
+        document.querySelector('.md-header') ||
+        document.querySelector('header');
+      const themeToggle = document.querySelector(
+        '.md-header__button[title*="theme"], .md-header__button[aria-label*="theme"]'
+      );
+      if (header) {
+        callback(header, themeToggle);
+      } else {
+        setTimeout(checkHeader, 300);
+      }
+    };
+    checkHeader();
   }
 
-  // ========== DROPDOWN CREATION ==========
   addLanguageDropdown() {
     const header =
       document.querySelector('.md-header__inner') ||
       document.querySelector('.md-header') ||
       document.querySelector('header');
-
     if (!header) {
-      console.warn('⚠️ Could not find MkDocs header.');
+      console.warn('⚠️ Header not found.');
       return;
     }
 
@@ -101,11 +110,18 @@ class WikiTranslator {
       <div id="google_translate_container" style="display:none;"></div>
     `;
 
-    header.insertAdjacentHTML('beforeend', dropdownHTML);
-    console.log('✅ Language dropdown added to header');
+    const themeToggle = document.querySelector(
+      '.md-header__button[title*="theme"], .md-header__button[aria-label*="theme"]'
+    );
+    if (themeToggle && themeToggle.parentElement) {
+      themeToggle.parentElement.insertAdjacentHTML('beforebegin', dropdownHTML);
+    } else {
+      header.insertAdjacentHTML('beforeend', dropdownHTML);
+    }
+
+    console.log('✅ Language dropdown successfully added');
   }
 
-  // ========== EVENT LISTENERS ==========
   setupEventListeners() {
     const button = document.getElementById('languageButton');
     const menu = document.getElementById('languageMenu');
@@ -124,9 +140,7 @@ class WikiTranslator {
         if (option) {
           const code = option.dataset.code;
           const lang = this.euLanguages.find((l) => l.code === code);
-          if (lang) {
-            this.selectLanguage(lang);
-          }
+          if (lang) this.selectLanguage(lang);
         }
       });
     }
@@ -136,83 +150,43 @@ class WikiTranslator {
     });
   }
 
-  // ========== LANGUAGE SELECTION ==========
-  async selectLanguage(language) {
+  selectLanguage(language) {
     document.getElementById('currentLanguage').textContent = language.name;
     document.getElementById('currentFlag').textContent = language.flag;
-    document.getElementById('languageMenu').style.display = 'none';
-
-    if (language.code !== this.currentLanguage) {
-      await this.translateContent(language.code);
-      this.currentLanguage = language.code;
-      this.saveCurrentLanguage();
-    }
-  }
-
-  saveCurrentLanguage() {
-    localStorage.setItem('coollife-wiki-language', this.currentLanguage);
+    localStorage.setItem('coollife-wiki-language', language.code);
+    this.translateContent(language.code);
   }
 
   loadSavedLanguage() {
-    const savedLang = localStorage.getItem('coollife-wiki-language');
-    if (savedLang && savedLang !== 'en') {
-      const language = this.euLanguages.find(
-        (lang) => lang.code === savedLang
-      );
-      if (language) {
-        document.getElementById('currentFlag').textContent = language.flag;
-        document.getElementById('currentLanguage').textContent =
-          language.name;
-        this.currentLanguage = savedLang;
-        setTimeout(() => this.translateContent(savedLang), 500);
-      }
-    }
+    const saved = localStorage.getItem('coollife-wiki-language');
+    if (saved && saved !== 'en') this.translateContent(saved);
   }
 
-  // ========== FREE TRANSLATION METHOD ==========
-  async translateText(text, targetLang) {
-    if (targetLang === 'en' || !text.trim()) {
-      return text;
+  async translateContent(targetLang) {
+    if (targetLang === 'en') {
+      window.location.reload();
+      return;
     }
 
     const select = document.querySelector('.goog-te-combo');
     if (!select) {
-      console.warn('⚠️ Google Translate widget not yet initialized.');
-      return text;
-    }
-
-    // Trigger the free translation via Google Translate widget
-    select.value = targetLang;
-    select.dispatchEvent(new Event('change'));
-
-    console.log(`🌍 Triggered free translation to ${targetLang}.`);
-    return text;
-  }
-
-  // ========== PAGE TRANSLATION ==========
-  async translateContent(targetLang) {
-    if (targetLang === 'en') {
-      window.location.reload(); // reload page to restore original language
+      console.warn('⚠️ Google Translate widget not ready yet.');
       return;
     }
 
-    console.log(`🔄 Translating entire page to ${targetLang}...`);
-    await this.translateText('dummy', targetLang);
+    select.value = targetLang;
+    select.dispatchEvent(new Event('change'));
+    console.log(`🌍 Page translated to ${targetLang}`);
   }
 }
 
-// Initialize translator
 new WikiTranslator();
 
-// Optional: Hide the top Google Translate banner
+// Hide Google Translate banner
 const style = document.createElement('style');
 style.innerHTML = `
   .goog-te-banner-frame.skiptranslate,
-  .goog-te-gadget-icon {
-    display: none !important;
-  }
-  body {
-    top: 0px !important;
-  }
+  .goog-te-gadget-icon { display: none !important; }
+  body { top: 0px !important; }
 `;
 document.head.appendChild(style);
