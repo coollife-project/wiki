@@ -1,105 +1,36 @@
-// =====================
-// 🌍 CoolLIFE WikiTranslator (Free MyMemory API + Batch Translation)
-// =====================
-
+// EU Language Translation for CoolLIFE Wiki
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
-            { code: 'en', name: 'English', flag: '🇬🇧' },
-            { code: 'bg', name: 'Български', flag: '🇧🇬' },
-            { code: 'hr', name: 'Hrvatski', flag: '🇭🇷' },
-            { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
-            { code: 'da', name: 'Dansk', flag: '🇩🇰' },
-            { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
-            { code: 'et', name: 'Eesti', flag: '🇪🇪' },
-            { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
-            { code: 'fr', name: 'Français', flag: '🇫🇷' },
-            { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-            { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
-            { code: 'hu', name: 'Magyar', flag: '🇭🇺' },
-            { code: 'ga', name: 'Gaeilge', flag: '🇮🇪' },
-            { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-            { code: 'lv', name: 'Latviešu', flag: '🇱🇻' },
-            { code: 'lt', name: 'Lietuvių', flag: '🇱🇹' },
-            { code: 'mt', name: 'Malti', flag: '🇲🇹' },
-            { code: 'pl', name: 'Polski', flag: '🇵🇱' },
-            { code: 'pt', name: 'Português', flag: '🇵🇹' },
-            { code: 'ro', name: 'Română', flag: '🇷🇴' },
-            { code: 'sk', name: 'Slovenčina', flag: '🇸🇰' },
-            { code: 'sl', name: 'Slovenščina', flag: '🇸🇮' },
-            { code: 'es', name: 'Español', flag: '🇪🇸' },
-            { code: 'sv', name: 'Svenska', flag: '🇸🇪' }
+            { code: 'en', name: 'English', flag: '\uD83C\uDDEC\uD83C\uDDE7' },
+            { code: 'bg', name: 'Български', flag: '\uD83C\uDDE7\uD83C\uDDEC' },
+            { code: 'hr', name: 'Hrvatski', flag: '\uD83C\uDDED\uD83C\uDDF7' },
+            { code: 'cs', name: 'Čeština', flag: '\uD83C\uDDE8\uD83C\uDDFF' },
+            { code: 'da', name: 'Dansk', flag: '\uD83C\uDDE9\uD83C\uDDF0' },
+            { code: 'nl', name: 'Nederlands', flag: '\uD83C\uDDF3\uD83C\uDDF1' },
+            { code: 'et', name: 'Eesti', flag: '\uD83C\uDDEA\uD83C\uDDEA' },
+            { code: 'fi', name: 'Suomi', flag: '\uD83C\uDDEB\uD83C\uDDEE' },
+            { code: 'fr', name: 'Français', flag: '\uD83C\uDDEB\uD83C\uDDF7' },
+            { code: 'de', name: 'Deutsch', flag: '\uD83C\uDDE9\uD83C\uDDEA' },
+            { code: 'el', name: 'Ελληνικά', flag: '\uD83C\uDDEC\uD83C\uDDF7' },
+            { code: 'hu', name: 'Magyar', flag: '\uD83C\uDDED\uD83C\uDDFA' },
+            { code: 'ga', name: 'Gaeilge', flag: '\uD83C\uDDEE\uD83C\uDDEA' },
+            { code: 'it', name: 'Italiano', flag: '\uD83C\uDDEE\uD83C\uDDF9' },
+            { code: 'lv', name: 'Latviešu', flag: '\uD83C\uDDF1\uD83C\uDDFB' },
+            { code: 'lt', name: 'Lietuvių', flag: '\uD83C\uDDF1\uD83C\uDDF9' },
+            { code: 'mt', name: 'Malti', flag: '\uD83C\uDDF2\uD83C\uDDF9' },
+            { code: 'pl', name: 'Polski', flag: '\uD83C\uDDF5\uD83C\uDDF1' },
+            { code: 'pt', name: 'Português', flag: '\uD83C\uDDF5\uD83C\uDDF9' },
+            { code: 'ro', name: 'Română', flag: '\uD83C\uDDF7\uD83C\uDDF4' },
+            { code: 'sk', name: 'Slovenčina', flag: '\uD83C\uDDF8\uD83C\uDDF0' },
+            { code: 'sl', name: 'Slovenščina', flag: '\uD83C\uDDF8\uD83C\uDDEE' },
+            { code: 'es', name: 'Español', flag: '\uD83C\uDDEA\uD83C\uDDF8' },
+            { code: 'sv', name: 'Svenska', flag: '\uD83C\uDDF8\uD83C\uDDEA' }
         ];
 
         this.currentLanguage = 'en';
         this.originalContent = new Map();
         this.init();
-    }
-
-    // =====================
-    // 🌐 INIT + SETUP
-    // =====================
-
-    init() {
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.setup());
-        } else {
-            this.setup();
-        }
-    }
-
-    setup() {
-        console.log('Setting up WikiTranslator...');
-        this.addLanguageDropdown();
-        this.setupEventListeners();
-        this.loadSavedLanguage();
-    }
-
-    addLanguageDropdown() {
-        const header = document.querySelector('.md-header__inner') ||
-                       document.querySelector('.md-header') ||
-                       document.querySelector('header');
-        if (!header) return console.warn('Header element not found.');
-
-        const dropdownHTML = `
-            <div class="language-dropdown">
-                <button class="language-button" id="languageButton">
-                    <span id="currentFlag">🇬🇧</span>
-                    <span id="currentLanguage">English</span>
-                    <span class="arrow">▼</span>
-                </button>
-                <div class="language-menu" id="languageMenu">
-                    ${this.euLanguages.map(lang => `
-                        <div class="language-option" data-code="${lang.code}">
-                            <span class="flag-menu">${lang.flag}</span>
-                            <span class="language-name">${lang.name}</span>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `;
-        header.insertAdjacentHTML('beforeend', dropdownHTML);
-    }
-
-    setupEventListeners() {
-        const button = document.getElementById('languageButton');
-        const menu = document.getElementById('languageMenu');
-        if (!button || !menu) return;
-
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        });
-
-        menu.addEventListener('click', (e) => {
-            const option = e.target.closest('.language-option');
-            if (!option) return;
-            const code = option.dataset.code;
-            const lang = this.euLanguages.find(l => l.code === code);
-            if (lang) this.selectLanguage(lang);
-        });
-
-        document.addEventListener('click', () => (menu.style.display = 'none'));
     }
 
     saveCurrentLanguage() {
@@ -119,21 +50,87 @@ class WikiTranslator {
         }
     }
 
+    init() {
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.setup());
+        } else {
+            this.setup();
+        }
+    }
+
+    setup() {
+        console.log('Setting up WikiTranslator');
+        this.addLanguageDropdown();
+        this.setupEventListeners();
+        this.loadSavedLanguage();
+    }
+
+    addLanguageDropdown() {
+        const header = document.querySelector('.md-header__inner') || 
+                       document.querySelector('.md-header') ||
+                       document.querySelector('header');
+        if (!header) {
+            console.warn('Could not find header element');
+            return;
+        }
+
+        const dropdownHTML = `
+            <div class="language-dropdown">
+                <button class="language-button" id="languageButton">
+                    <span id="currentFlag">🇬🇧</span>
+                    <span id="currentLanguage">English</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="language-menu" id="languageMenu">
+                    ${this.euLanguages.map(lang => `
+                        <div class="language-option" data-code="${lang.code}">
+                            <span class="flag-menu">${lang.flag}</span>
+                            <span class="language-name">${lang.name}</span>
+                        </div>`).join('')}
+                </div>
+            </div>
+        `;
+        header.insertAdjacentHTML('beforeend', dropdownHTML);
+    }
+
+    setupEventListeners() {
+        const button = document.getElementById('languageButton');
+        const menu = document.getElementById('languageMenu');
+        
+        if (button) {
+            button.addEventListener('click', (e) => {
+                e.stopPropagation();
+                menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+            });
+        }
+
+        if (menu) {
+            menu.addEventListener('click', (e) => {
+                const option = e.target.closest('.language-option');
+                if (option) {
+                    const code = option.dataset.code;
+                    const lang = this.euLanguages.find(l => l.code === code);
+                    if (lang) this.selectLanguage(lang);
+                }
+            });
+        }
+
+        document.addEventListener('click', () => {
+            if (menu) menu.style.display = 'none';
+        });
+    }
+
     async selectLanguage(language) {
         document.getElementById('currentLanguage').textContent = language.name;
         document.getElementById('currentFlag').textContent = language.flag;
         document.getElementById('languageMenu').style.display = 'none';
-
+        
         if (language.code !== this.currentLanguage) {
             await this.translateContent(language.code);
             this.currentLanguage = language.code;
             this.saveCurrentLanguage();
         }
     }
-
-    // =====================
-    // ⚙️ TRANSLATION LOGIC
-    // =====================
 
     async translateContent(targetLang) {
         if (targetLang === 'en') {
@@ -145,104 +142,80 @@ class WikiTranslator {
 
         try {
             const selectors = [
-                '.md-content h1', '.md-content h2', '.md-content h3',
-                '.md-content h4', '.md-content h5', '.md-content h6',
-                '.md-content p', '.md-content li',
-                '.md-nav__title', '.md-nav__link', '.md-toc__link'
+                '.md-content h1',
+                '.md-content h2', 
+                '.md-content h3',
+                '.md-content h4',
+                '.md-content h5',
+                '.md-content h6',
+                '.md-content p',
+                '.md-content li',
+                '.md-nav__title',
+                '.md-nav__link',
+                '.md-toc__link'
             ];
 
-            const allElements = [];
+            let elements = [];
             for (const selector of selectors) {
-                document.querySelectorAll(selector).forEach(el => {
-                    if (!el.closest('.language-dropdown') && el.textContent.trim().length > 1) {
-                        allElements.push(el);
-                    }
-                });
+                elements = [...elements, ...document.querySelectorAll(selector)];
             }
 
-            console.log(`🈶 Found ${allElements.length} elements to translate.`);
+            // Filter valid translatable elements
+            const textElements = elements.filter(el => {
+                if (el.closest('.language-dropdown')) return false;
+                if (el.querySelector('img, figure, iframe, video')) return false;
+                return el.textContent.trim().length > 1;
+            });
 
-            const batchSize = 15;
-            for (let i = 0; i < allElements.length; i += batchSize) {
-                const batch = allElements.slice(i, i + batchSize);
-                await this.translateBatch(batch, targetLang);
-            }
+            // Cache originals
+            textElements.forEach(el => {
+                const key = this.getElementKey(el);
+                if (!this.originalContent.has(key)) {
+                    this.originalContent.set(key, el.innerHTML);
+                }
+            });
+
+            // Collect all texts
+            const texts = textElements.map(el => el.innerText.trim());
+
+            // Batch translate all texts
+            const translations = await this.batchTranslateText(texts, targetLang);
+
+            // Apply translations
+            textElements.forEach((el, i) => {
+                if (translations[i]) el.innerText = translations[i];
+            });
 
         } catch (error) {
-            console.error('❌ Translation failed:', error);
+            console.error('Translation failed:', error);
             alert('Translation failed. Please try again.');
         } finally {
             this.hideLoadingIndicator();
         }
     }
 
-    async translateBatch(elements, targetLang) {
-        const texts = [];
-        const keys = [];
+    // ✅ Batch translation using MyMemory
+    async batchTranslateText(texts, targetLang) {
+        if (!texts.length || targetLang === 'en') return texts;
 
-        for (const el of elements) {
-            const key = this.getElementKey(el);
-            if (!this.originalContent.has(key)) this.originalContent.set(key, el.textContent);
-            keys.push(key);
-            texts.push(this.originalContent.get(key));
-        }
-
-        const translations = await this.translateTexts(texts, targetLang);
-
-        for (let i = 0; i < elements.length; i++) {
-            const el = elements[i];
-            const translated = translations[i] || texts[i];
-            if (translated === texts[i]) {
-                const retry = await this.translateText(texts[i], targetLang);
-                el.textContent = retry || texts[i];
-            } else {
-                el.textContent = translated;
-            }
-        }
-    }
-
-    // 🚀 Batch translation using MyMemory (free API)
-    async translateTexts(texts, targetLang) {
-        if (!texts.length) return [];
         const joined = texts.join('\n');
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(joined)}&langpair=en|${targetLang}`;
-
+        
         try {
             const response = await fetch(url);
             const data = await response.json();
-            const raw = data?.responseData?.translatedText;
-            if (!raw) return texts;
-
-            const split = raw.split('\n');
-            if (split.length === texts.length) return split;
-            return texts.map((t, i) => split[i] || t);
+            const translated = data?.responseData?.translatedText?.split('\n');
+            return translated && translated.length === texts.length ? translated : texts;
         } catch (e) {
-            console.error('Batch translation failed:', e);
+            console.error('Batch translation error:', e);
             return texts;
         }
     }
 
-    // Fallback for single lines
-    async translateText(text, targetLang) {
-        if (targetLang === 'en' || !text.trim()) return text;
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
-        try {
-            const response = await fetch(url);
-            const data = await response.json();
-            return data?.responseData?.translatedText || text;
-        } catch {
-            return text;
-        }
-    }
-
-    // =====================
-    // 🧩 HELPERS
-    // =====================
-
     restoreOriginalContent() {
         this.originalContent.forEach((content, key) => {
             const element = document.querySelector(`[data-translation-key="${key}"]`);
-            if (element) element.textContent = content;
+            if (element) element.innerHTML = content;
         });
     }
 
@@ -262,18 +235,6 @@ class WikiTranslator {
                 <span>Translating...</span>
             </div>
         `;
-        Object.assign(indicator.style, {
-            position: 'fixed',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            background: 'rgba(0,0,0,0.7)',
-            color: '#fff',
-            padding: '20px 30px',
-            borderRadius: '10px',
-            fontSize: '16px',
-            zIndex: 9999,
-        });
         document.body.appendChild(indicator);
     }
 
@@ -283,5 +244,5 @@ class WikiTranslator {
     }
 }
 
-// Initialize
+// Initialize translator
 new WikiTranslator();
