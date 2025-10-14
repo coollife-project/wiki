@@ -42,10 +42,21 @@ li {
     cursor: pointer;
     font-size: 0.8rem;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     gap: 0.5rem;
     min-width: 150px; /* Wider to accommodate flag + name */
     transition: background-color 0.2s;
+}
+
+.language-button span {
+    line-height: 1;
+}
+
+#currentFlag {
+    font-size: 1.1rem;
+    line-height: 1;
+    position: relative;
+    top: 1px; /* adjust for perfect visual baseline */
 }
 
 .language-button #currentFlag {
