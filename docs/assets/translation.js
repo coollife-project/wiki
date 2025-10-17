@@ -222,7 +222,9 @@ class WikiTranslator {
     }
 
     async safeFetchTranslation(text, targetLang) {
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
+        const apiEmail = "h85269140@gmail.com"; // replace with your real email
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${apiEmail}`;
+
         try {
             const res = await fetch(url);
             const data = await res.json();
