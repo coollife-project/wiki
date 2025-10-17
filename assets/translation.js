@@ -1,4 +1,4 @@
-// ⚡ Optimized Full-Page Translator for CoolLIFE Wiki (MyMemory API - direct)
+// ⚡ Full-Page Translator for CoolLIFE Wiki (Optimized for MyMemory API)
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -121,7 +121,7 @@ class WikiTranslator {
         }
     }
 
-    // ✅ Full page translation (direct API)
+    // 🧠 Core: full-page translation (≤500 chars per request)
     async translateWholePage(targetLang) {
         if (targetLang === 'en') {
             this.restoreOriginalTexts();
@@ -131,6 +131,7 @@ class WikiTranslator {
         this.showLoadingIndicator();
 
         try {
+            // Collect all visible text nodes
             const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
                 acceptNode: node => {
                     const txt = node.nodeValue.trim();
@@ -152,32 +153,30 @@ class WikiTranslator {
                 this.originalTexts.push(node.nodeValue);
             }
 
+            // Deduplicate and prepare text
             const uniqueTexts = [...new Set(this.originalTexts)];
             const translationsMap = new Map();
 
+            // Use cache
             for (const text of uniqueTexts) {
                 if (this.cache.has(text)) translationsMap.set(text, this.cache.get(text));
             }
 
+            // Filter out already cached ones
             const toTranslate = uniqueTexts.filter(t => !translationsMap.has(t));
-            if (toTranslate.length === 0) {
-                this.applyTranslations(translationsMap);
-                this.hideLoadingIndicator();
-                return;
-            }
 
-            const batches = this.chunkByLength(toTranslate, 4800);
-            for (const batch of batches) {
-                const joined = batch.join('\n<<<SEP>>>\n');
-                const translated = await this.safeFetchTranslation(joined, targetLang);
-                if (!translated) continue;
-                const parts = translated.split('\n<<<SEP>>>\n');
-                batch.forEach((t, i) => {
-                    translationsMap.set(t, parts[i] || t);
-                    this.cache.set(t, parts[i] || t);
-                });
+            // Chunk texts to stay under 500 characters
+            for (const text of toTranslate) {
+                const chunks = this.chunkText(text, 490);
+                let translatedText = '';
+                for (const chunk of chunks) {
+                    const translatedChunk = await this.safeFetchTranslation(chunk, targetLang);
+                    translatedText += (translatedChunk || chunk) + ' ';
+                    await this.sleep(1000); // ~1 req/sec to stay safe
+                }
+                translationsMap.set(text, translatedText.trim());
+                this.cache.set(text, translatedText.trim());
                 this.applyTranslations(translationsMap);
-                await this.sleep(1000);
             }
 
             this.applyTranslations(translationsMap);
@@ -189,8 +188,17 @@ class WikiTranslator {
         }
     }
 
+    applyTranslations(map) {
+        this.textNodes.forEach((node, i) => {
+            const original = this.originalTexts[i];
+            if (map.has(original)) node.nodeValue = map.get(original);
+        });
+    }
+
+    // ✅ Uses email parameter for 50k/day quota
     async safeFetchTranslation(text, targetLang) {
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}`;
+        const email = "h85269140@gmail.com"; // 🔹 Replace with your valid email
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${encodeURIComponent(email)}`;
         try {
             const res = await fetch(url);
             const data = await res.json();
@@ -201,32 +209,19 @@ class WikiTranslator {
         }
     }
 
-    chunkByLength(texts, maxLen) {
-        const batches = [];
-        let batch = [], len = 0;
-        for (const t of texts) {
-            const l = t.length + 13;
-            if (len + l > maxLen && batch.length > 0) {
-                batches.push(batch);
-                batch = [];
-                len = 0;
-            }
-            batch.push(t);
-            len += l;
+    // Split long text into <=500-char chunks
+    chunkText(text, size = 490) {
+        const chunks = [];
+        for (let i = 0; i < text.length; i += size) {
+            chunks.push(text.slice(i, i + size));
         }
-        if (batch.length) batches.push(batch);
-        return batches;
-    }
-
-    applyTranslations(map) {
-        this.textNodes.forEach((node, i) => {
-            const original = this.originalTexts[i];
-            if (map.has(original)) node.nodeValue = map.get(original);
-        });
+        return chunks;
     }
 
     restoreOriginalTexts() {
-        this.textNodes.forEach((node, i) => node.nodeValue = this.originalTexts[i]);
+        this.textNodes.forEach((node, i) => {
+            node.nodeValue = this.originalTexts[i];
+        });
     }
 
     showLoadingIndicator() {
