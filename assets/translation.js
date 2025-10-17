@@ -171,7 +171,8 @@ class WikiTranslator {
             }
 
             // Batch requests respecting MyMemory 5000-char limit
-            const batches = this.chunkByLength(toTranslate, 4800);
+            const batches = this.chunkByLength(toTranslate, 1500);
+            await this.sleep(1500);
             for (const batch of batches) {
                 const joined = batch.join('\n<<<SEP>>>\n');
                 const translated = await this.safeFetchTranslation(joined, targetLang);

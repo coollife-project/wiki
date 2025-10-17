@@ -129,7 +129,6 @@ li {
 
 .flag-menu,
 #currentFlag {
-    display: none;
     font-size: 1.2em;
     line-height: 1;
     margin-right: 0.5rem;
