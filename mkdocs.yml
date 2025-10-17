@@ -54,10 +54,8 @@ theme:
         name: Switch to light mode
         
 extra_javascript:
-  - assets/uploads/coollife_training.pptx
-  - assets/uploads/dhc_final.pptx
-  - assets/uploads/dsc_training.pptx
-  - assets/uploads/ehp_webinar.pptx
+  - assets/translation.js
+  - https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit
 
 # nav:
 #   - For Authors:
