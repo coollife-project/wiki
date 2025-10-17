@@ -58,6 +58,7 @@ extra_javascript:
   - assets/uploads/dhc_final.pptx
   - assets/uploads/dsc_training.pptx
   - assets/uploads/ehp_webinar.pptx
+  - assets/translation.js
 
 # nav:
 #   - For Authors:
