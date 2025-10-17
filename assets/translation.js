@@ -1,5 +1,5 @@
-// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
-// ✅ Top progress bar only – no centered overlay 11
+// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API, POST version)
+// ✅ Fixed large text issues + quota detection + top progress bar only
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -134,7 +134,7 @@ class WikiTranslator {
         }
     }
 
-    // 🧠 Core: full-page translation optimized for MyMemory API
+    // 🧠 Core: full-page translation optimized for MyMemory API (POST + batching)
     async translateWholePage(targetLang) {
         if (targetLang === 'en') {
             this.restoreOriginalTexts();
@@ -144,7 +144,7 @@ class WikiTranslator {
         this.showLoadingIndicator();
 
         try {
-            // Collect text nodes (visible, non-empty)
+            // Collect visible text nodes
             const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
                 acceptNode: node => {
                     const txt = node.nodeValue.trim();
@@ -166,7 +166,6 @@ class WikiTranslator {
                 this.originalTexts.push(node.nodeValue);
             }
 
-            // Deduplicate and prepare text for translation
             const uniqueTexts = [...new Set(this.originalTexts)];
             const translationsMap = new Map();
 
@@ -182,8 +181,8 @@ class WikiTranslator {
                 return;
             }
 
-            // Batch requests respecting MyMemory 5000-char limit
-            const batches = this.chunkByLength(toTranslate, 4800);
+            // ✅ Respect ~4800 char batch limit
+            const batches = this.chunkByLength(toTranslate, 4500);
             const totalBatches = batches.length;
             let completed = 0;
 
@@ -191,15 +190,17 @@ class WikiTranslator {
                 const joined = batch.join('\n<<<SEP>>>\n');
                 const translated = await this.safeFetchTranslation(joined, targetLang);
                 if (!translated) continue;
+
                 const parts = translated.split('\n<<<SEP>>>\n');
                 batch.forEach((t, i) => {
                     translationsMap.set(t, parts[i] || t);
                     this.cache.set(t, parts[i] || t);
                 });
+
                 completed++;
                 this.updateProgress((completed / totalBatches) * 100);
                 this.applyTranslations(translationsMap);
-                await this.sleep(1000); // ~1 req/sec
+                await this.sleep(800); // small delay to respect API
             }
 
             this.applyTranslations(translationsMap);
@@ -221,17 +222,32 @@ class WikiTranslator {
         });
     }
 
+    // ✅ Safe POST-based MyMemory request (fixes long text + quota checks)
     async safeFetchTranslation(text, targetLang) {
-        const apiEmail = "h85269140@gmail.com"; // replace with your real email
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${apiEmail}`;
+        const apiEmail = "h85269140@gmail.com"; // your email
+        const url = "https://api.mymemory.translated.net/get";
 
         try {
-            const res = await fetch(url);
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+                },
+                body: `q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${apiEmail}`
+            });
+
             const data = await res.json();
-            return data?.responseData?.translatedText || null;
+            console.log("MyMemory POST response:", data);
+
+            if (data.quotaFinished) {
+                alert("⚠️ Daily translation limit reached. Try again tomorrow.");
+                return text;
+            }
+
+            return data?.responseData?.translatedText || text;
         } catch (e) {
-            console.error('API error:', e);
-            return null;
+            console.error("API error:", e);
+            return text;
         }
     }
 
@@ -258,9 +274,8 @@ class WikiTranslator {
         });
     }
 
-    // ✅ Top progress bar loader – removes old overlay automatically
+    // ✅ Top progress bar loader
     showLoadingIndicator() {
-        // Remove any old overlay from previous versions
         const old = document.querySelector('#translationLoader, .translation-loader');
         if (old) old.remove();
 
