@@ -1,32 +1,33 @@
 // ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
-// ✅ Top progress bar only – no centered overlay
+// ✅ Uses image-based flags (FlagCDN) so they display on all systems
+
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
-            { code: 'en', name: 'English', flag: '🇬🇧' },
-            { code: 'bg', name: 'Български', flag: '🇧🇬' },
-            { code: 'hr', name: 'Hrvatski', flag: '🇭🇷' },
-            { code: 'cs', name: 'Čeština', flag: '🇨🇿' },
-            { code: 'da', name: 'Dansk', flag: '🇩🇰' },
-            { code: 'nl', name: 'Nederlands', flag: '🇳🇱' },
-            { code: 'et', name: 'Eesti', flag: '🇪🇪' },
-            { code: 'fi', name: 'Suomi', flag: '🇫🇮' },
-            { code: 'fr', name: 'Français', flag: '🇫🇷' },
-            { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-            { code: 'el', name: 'Ελληνικά', flag: '🇬🇷' },
-            { code: 'hu', name: 'Magyar', flag: '🇭🇺' },
-            { code: 'ga', name: 'Gaeilge', flag: '🇮🇪' },
-            { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-            { code: 'lv', name: 'Latviešu', flag: '🇱🇻' },
-            { code: 'lt', name: 'Lietuvių', flag: '🇱🇹' },
-            { code: 'mt', name: 'Malti', flag: '🇲🇹' },
-            { code: 'pl', name: 'Polski', flag: '🇵🇱' },
-            { code: 'pt', name: 'Português', flag: '🇵🇹' },
-            { code: 'ro', name: 'Română', flag: '🇷🇴' },
-            { code: 'sk', name: 'Slovenčina', flag: '🇸🇰' },
-            { code: 'sl', name: 'Slovenščina', flag: '🇸🇮' },
-            { code: 'es', name: 'Español', flag: '🇪🇸' },
-            { code: 'sv', name: 'Svenska', flag: '🇸🇪' }
+            { code: 'en', name: 'English', flag: 'gb' },
+            { code: 'bg', name: 'Български', flag: 'bg' },
+            { code: 'hr', name: 'Hrvatski', flag: 'hr' },
+            { code: 'cs', name: 'Čeština', flag: 'cz' },
+            { code: 'da', name: 'Dansk', flag: 'dk' },
+            { code: 'nl', name: 'Nederlands', flag: 'nl' },
+            { code: 'et', name: 'Eesti', flag: 'ee' },
+            { code: 'fi', name: 'Suomi', flag: 'fi' },
+            { code: 'fr', name: 'Français', flag: 'fr' },
+            { code: 'de', name: 'Deutsch', flag: 'de' },
+            { code: 'el', name: 'Ελληνικά', flag: 'gr' },
+            { code: 'hu', name: 'Magyar', flag: 'hu' },
+            { code: 'ga', name: 'Gaeilge', flag: 'ie' },
+            { code: 'it', name: 'Italiano', flag: 'it' },
+            { code: 'lv', name: 'Latviešu', flag: 'lv' },
+            { code: 'lt', name: 'Lietuvių', flag: 'lt' },
+            { code: 'mt', name: 'Malti', flag: 'mt' },
+            { code: 'pl', name: 'Polski', flag: 'pl' },
+            { code: 'pt', name: 'Português', flag: 'pt' },
+            { code: 'ro', name: 'Română', flag: 'ro' },
+            { code: 'sk', name: 'Slovenčina', flag: 'sk' },
+            { code: 'sl', name: 'Slovenščina', flag: 'si' },
+            { code: 'es', name: 'Español', flag: 'es' },
+            { code: 'sv', name: 'Svenska', flag: 'se' }
         ];
 
         this.currentLanguage = 'en';
@@ -35,6 +36,10 @@ class WikiTranslator {
         this.originalTexts = [];
         this.progressInterval = null;
         this.init();
+    }
+
+    getFlagImage(flagCode) {
+        return `https://flagcdn.com/24x18/${flagCode.toLowerCase()}.png`;
     }
 
     saveCurrentLanguage() {
@@ -46,7 +51,10 @@ class WikiTranslator {
         if (saved && saved !== 'en') {
             const lang = this.euLanguages.find(l => l.code === saved);
             if (lang) {
-                document.getElementById('currentFlag').textContent = lang.flag;
+                const flagEl = document.getElementById('currentFlag');
+                flagEl.src = this.getFlagImage(lang.flag);
+                flagEl.alt = lang.flag.toUpperCase();
+
                 document.getElementById('currentLanguage').textContent = lang.name;
                 this.currentLanguage = saved;
                 setTimeout(() => this.translateWholePage(lang.code), 500);
@@ -66,13 +74,27 @@ class WikiTranslator {
         this.setupEventListeners();
         this.loadSavedLanguage();
 
-        // 🧹 Ensure any old overlay is hidden
+        // 🧹 Hide any old overlay
         const style = document.createElement('style');
         style.textContent = `
             #translationLoader, .translation-loader {
                 display: none !important;
                 visibility: hidden !important;
                 opacity: 0 !important;
+            }
+            .language-dropdown img.flag-menu {
+                width: 20px;
+                height: 15px;
+                margin-right: 8px;
+                vertical-align: middle;
+                border-radius: 2px;
+            }
+            #currentFlag {
+                width: 20px;
+                height: 15px;
+                margin-right: 6px;
+                vertical-align: middle;
+                border-radius: 2px;
             }
         `;
         document.head.appendChild(style);
@@ -87,14 +109,14 @@ class WikiTranslator {
         const dropdownHTML = `
             <div class="language-dropdown">
                 <button class="language-button" id="languageButton">
-                    <span id="currentFlag">🇬🇧</span>
+                    <img id="currentFlag" src="${this.getFlagImage('gb')}" alt="GB" />
                     <span id="currentLanguage">English</span>
                     <span class="arrow">▼</span>
                 </button>
                 <div class="language-menu" id="languageMenu">
                     ${this.euLanguages.map(lang => `
                         <div class="language-option" data-code="${lang.code}">
-                            <span class="flag-menu">${lang.flag}</span>
+                            <img class="flag-menu" src="${this.getFlagImage(lang.flag)}" alt="${lang.flag.toUpperCase()}" />
                             <span class="language-name">${lang.name}</span>
                         </div>`).join('')}
                 </div>
@@ -125,8 +147,11 @@ class WikiTranslator {
 
     async selectLanguage(language) {
         document.getElementById('currentLanguage').textContent = language.name;
-        document.getElementById('currentFlag').textContent = language.flag;
+        const flagEl = document.getElementById('currentFlag');
+        flagEl.src = this.getFlagImage(language.flag);
+        flagEl.alt = language.flag.toUpperCase();
         document.getElementById('languageMenu').style.display = 'none';
+
         if (language.code !== this.currentLanguage) {
             await this.translateWholePage(language.code);
             this.currentLanguage = language.code;
@@ -134,7 +159,7 @@ class WikiTranslator {
         }
     }
 
-    // 🧠 Core: full-page translation optimized for MyMemory API
+    // 🧠 Full-page translation
     async translateWholePage(targetLang) {
         if (targetLang === 'en') {
             this.restoreOriginalTexts();
@@ -144,7 +169,6 @@ class WikiTranslator {
         this.showLoadingIndicator();
 
         try {
-            // Collect text nodes (visible, non-empty)
             const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
                 acceptNode: node => {
                     const txt = node.nodeValue.trim();
@@ -166,11 +190,9 @@ class WikiTranslator {
                 this.originalTexts.push(node.nodeValue);
             }
 
-            // Deduplicate and prepare text for translation
             const uniqueTexts = [...new Set(this.originalTexts)];
             const translationsMap = new Map();
 
-            // Use cache first
             for (const text of uniqueTexts) {
                 if (this.cache.has(text)) translationsMap.set(text, this.cache.get(text));
             }
@@ -182,7 +204,6 @@ class WikiTranslator {
                 return;
             }
 
-            // Batch requests respecting MyMemory 5000-char limit
             const batches = this.chunkByLength(toTranslate, 4800);
             const totalBatches = batches.length;
             let completed = 0;
@@ -199,7 +220,7 @@ class WikiTranslator {
                 completed++;
                 this.updateProgress((completed / totalBatches) * 100);
                 this.applyTranslations(translationsMap);
-                await this.sleep(1000); // ~1 req/sec
+                await this.sleep(1000);
             }
 
             this.applyTranslations(translationsMap);
@@ -256,9 +277,7 @@ class WikiTranslator {
         });
     }
 
-    // ✅ Top progress bar loader – removes old overlay automatically
     showLoadingIndicator() {
-        // Remove any old overlay from previous versions
         const old = document.querySelector('#translationLoader, .translation-loader');
         if (old) old.remove();
 
