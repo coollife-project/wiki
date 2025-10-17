@@ -87,7 +87,6 @@ li {
 
 /* Dropdown menu */
 .language-menu {
-    display: none;
     position: absolute;
     background-color: var(--md-default-bg-color);
     min-width: 200px;

@@ -1,5 +1,5 @@
 // ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
-// ✅ Top progress bar only – no centered overlay
+// ✅ Top progress bar only – no centered overlay 112233
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
