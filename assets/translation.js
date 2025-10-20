@@ -1,5 +1,4 @@
-// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API, POST version)
-// ✅ Fast, reliable, and works with long wiki pages
+// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API, GET-safe version)
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -33,7 +32,6 @@ class WikiTranslator {
         this.cache = new Map();
         this.textNodes = [];
         this.originalTexts = [];
-        this.progressInterval = null;
         this.init();
     }
 
@@ -156,10 +154,12 @@ class WikiTranslator {
             const uniqueTexts = [...new Set(this.originalTexts)];
             const translationsMap = new Map();
 
-            for (const t of uniqueTexts) if (this.cache.has(t)) translationsMap.set(t, this.cache.get(t));
+            for (const t of uniqueTexts)
+                if (this.cache.has(t)) translationsMap.set(t, this.cache.get(t));
+
             const toTranslate = uniqueTexts.filter(t => !translationsMap.has(t));
 
-            const email = "h85269140@gmail.com"; // ✅ increases quota
+            const email = "h85269140@gmail.com"; // For MyMemory quota
             const batches = this.chunkByLength(toTranslate, 4800);
             let completed = 0;
 
@@ -176,7 +176,7 @@ class WikiTranslator {
                 completed++;
                 this.updateProgress((completed / batches.length) * 100);
                 this.applyTranslations(translationsMap);
-                await this.sleep(500); // slightly faster than 1s
+                await this.sleep(800); // small delay to respect rate limit
             }
 
             this.applyTranslations(translationsMap);
@@ -195,29 +195,15 @@ class WikiTranslator {
         });
     }
 
-    // ✅ POST-based safe request (no URL length limit)
+    // ✅ GET version (safe for GitHub Pages)
     async safeFetchTranslation(text, targetLang, email) {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${encodeURIComponent(email)}`;
         try {
-            const params = new URLSearchParams();
-            params.append("q", text);
-            params.append("langpair", `en|${targetLang}`);
-            params.append("de", email);
-
-            const res = await fetch("https://api.mymemory.translated.net/get", {
-                method: "POST",
-                headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                body: params
-            });
-
+            const res = await fetch(url);
             const data = await res.json();
-            if (data?.responseStatus === 200 && data?.responseData?.translatedText) {
-                return data.responseData.translatedText;
-            } else {
-                console.warn("MyMemory API error:", data?.responseDetails);
-                return null;
-            }
-        } catch (err) {
-            console.error("API error:", err);
+            return data?.responseData?.translatedText || null;
+        } catch (e) {
+            console.error("API error:", e);
             return null;
         }
     }
