@@ -1,4 +1,5 @@
-// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API, GET-safe version)
+// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
+// ✅ Fast batched version with progress bar + safe delay (Option 1)
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -32,6 +33,7 @@ class WikiTranslator {
         this.cache = new Map();
         this.textNodes = [];
         this.originalTexts = [];
+        this.progressInterval = null;
         this.init();
     }
 
@@ -154,12 +156,10 @@ class WikiTranslator {
             const uniqueTexts = [...new Set(this.originalTexts)];
             const translationsMap = new Map();
 
-            for (const t of uniqueTexts)
-                if (this.cache.has(t)) translationsMap.set(t, this.cache.get(t));
-
+            for (const t of uniqueTexts) if (this.cache.has(t)) translationsMap.set(t, this.cache.get(t));
             const toTranslate = uniqueTexts.filter(t => !translationsMap.has(t));
 
-            const email = "h85269140@gmail.com"; // For MyMemory quota
+            const email = "h85269140@gmail.com"; // for quota
             const batches = this.chunkByLength(toTranslate, 4800);
             let completed = 0;
 
@@ -176,7 +176,7 @@ class WikiTranslator {
                 completed++;
                 this.updateProgress((completed / batches.length) * 100);
                 this.applyTranslations(translationsMap);
-                await this.sleep(800); // small delay to respect rate limit
+                await this.sleep(1000); // 🔹 SAFE DELAY (1.5s) to prevent rate limit
             }
 
             this.applyTranslations(translationsMap);
@@ -195,15 +195,13 @@ class WikiTranslator {
         });
     }
 
-    // ✅ GET version (safe for GitHub Pages)
     async safeFetchTranslation(text, targetLang, email) {
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${encodeURIComponent(email)}`;
         try {
             const res = await fetch(url);
             const data = await res.json();
             return data?.responseData?.translatedText || null;
-        } catch (e) {
-            console.error("API error:", e);
+        } catch {
             return null;
         }
     }
