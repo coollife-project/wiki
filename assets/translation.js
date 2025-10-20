@@ -1,5 +1,5 @@
-// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
-// ✅ Fast batched version with top progress bar
+// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API, POST version)
+// ✅ Fast, reliable, and works with long wiki pages
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -159,7 +159,7 @@ class WikiTranslator {
             for (const t of uniqueTexts) if (this.cache.has(t)) translationsMap.set(t, this.cache.get(t));
             const toTranslate = uniqueTexts.filter(t => !translationsMap.has(t));
 
-            const email = "h85269140@gmail.com"; // for quota
+            const email = "h85269140@gmail.com"; // ✅ increases quota
             const batches = this.chunkByLength(toTranslate, 4800);
             let completed = 0;
 
@@ -176,7 +176,7 @@ class WikiTranslator {
                 completed++;
                 this.updateProgress((completed / batches.length) * 100);
                 this.applyTranslations(translationsMap);
-                await this.sleep(1000);
+                await this.sleep(500); // slightly faster than 1s
             }
 
             this.applyTranslations(translationsMap);
@@ -195,13 +195,29 @@ class WikiTranslator {
         });
     }
 
+    // ✅ POST-based safe request (no URL length limit)
     async safeFetchTranslation(text, targetLang, email) {
-        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${encodeURIComponent(email)}`;
         try {
-            const res = await fetch(url);
+            const params = new URLSearchParams();
+            params.append("q", text);
+            params.append("langpair", `en|${targetLang}`);
+            params.append("de", email);
+
+            const res = await fetch("https://api.mymemory.translated.net/get", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: params
+            });
+
             const data = await res.json();
-            return data?.responseData?.translatedText || null;
-        } catch {
+            if (data?.responseStatus === 200 && data?.responseData?.translatedText) {
+                return data.responseData.translatedText;
+            } else {
+                console.warn("MyMemory API error:", data?.responseDetails);
+                return null;
+            }
+        } catch (err) {
+            console.error("API error:", err);
             return null;
         }
     }
