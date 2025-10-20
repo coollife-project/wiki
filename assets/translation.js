@@ -1,5 +1,5 @@
 // ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
-// ✅ Fast batched version with progress bar + safe delay (Option 1)
+// ✅ Fast batched version with top progress bar
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -176,7 +176,7 @@ class WikiTranslator {
                 completed++;
                 this.updateProgress((completed / batches.length) * 100);
                 this.applyTranslations(translationsMap);
-                await this.sleep(1000); // 🔹 SAFE DELAY (1.5s) to prevent rate limit
+                await this.sleep(1000);
             }
 
             this.applyTranslations(translationsMap);
