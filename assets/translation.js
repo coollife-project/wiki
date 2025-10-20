@@ -1,4 +1,5 @@
-// ⚡ Full-Page Translator for CoolLIFE Wiki (Optimized for MyMemory API)
+// ⚡ CoolLIFE Wiki – Optimized Full-Page Translator (MyMemory API)
+// ✅ Fast batched version with top progress bar
 class WikiTranslator {
     constructor() {
         this.euLanguages = [
@@ -32,6 +33,7 @@ class WikiTranslator {
         this.cache = new Map();
         this.textNodes = [];
         this.originalTexts = [];
+        this.progressInterval = null;
         this.init();
     }
 
@@ -121,17 +123,15 @@ class WikiTranslator {
         }
     }
 
-    // 🧠 Core: full-page translation (≤500 chars per request)
     async translateWholePage(targetLang) {
         if (targetLang === 'en') {
             this.restoreOriginalTexts();
             return;
         }
 
-        this.showLoadingIndicator();
+        this.showProgressBar();
 
         try {
-            // Collect all visible text nodes
             const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
                 acceptNode: node => {
                     const txt = node.nodeValue.trim();
@@ -153,38 +153,38 @@ class WikiTranslator {
                 this.originalTexts.push(node.nodeValue);
             }
 
-            // Deduplicate and prepare text
             const uniqueTexts = [...new Set(this.originalTexts)];
             const translationsMap = new Map();
 
-            // Use cache
-            for (const text of uniqueTexts) {
-                if (this.cache.has(text)) translationsMap.set(text, this.cache.get(text));
-            }
-
-            // Filter out already cached ones
+            for (const t of uniqueTexts) if (this.cache.has(t)) translationsMap.set(t, this.cache.get(t));
             const toTranslate = uniqueTexts.filter(t => !translationsMap.has(t));
 
-            // Chunk texts to stay under 500 characters
-            for (const text of toTranslate) {
-                const chunks = this.chunkText(text, 490);
-                let translatedText = '';
-                for (const chunk of chunks) {
-                    const translatedChunk = await this.safeFetchTranslation(chunk, targetLang);
-                    translatedText += (translatedChunk || chunk) + ' ';
-                    await this.sleep(1000); // ~1 req/sec to stay safe
+            const email = "h85269140@gmail.com"; // for quota
+            const batches = this.chunkByLength(toTranslate, 4800);
+            let completed = 0;
+
+            for (const batch of batches) {
+                const joined = batch.join("\n<<<SEP>>>\n");
+                const translated = await this.safeFetchTranslation(joined, targetLang, email);
+                if (translated) {
+                    const parts = translated.split("\n<<<SEP>>>\n");
+                    batch.forEach((t, i) => {
+                        translationsMap.set(t, parts[i] || t);
+                        this.cache.set(t, parts[i] || t);
+                    });
                 }
-                translationsMap.set(text, translatedText.trim());
-                this.cache.set(text, translatedText.trim());
+                completed++;
+                this.updateProgress((completed / batches.length) * 100);
                 this.applyTranslations(translationsMap);
+                await this.sleep(1000);
             }
 
             this.applyTranslations(translationsMap);
-        } catch (err) {
-            console.error('Translation failed:', err);
-            alert('Translation failed. Please try again.');
+            this.updateProgress(100);
+        } catch (e) {
+            console.error("Translation failed:", e);
         } finally {
-            this.hideLoadingIndicator();
+            this.hideProgressBar();
         }
     }
 
@@ -195,49 +195,60 @@ class WikiTranslator {
         });
     }
 
-    // ✅ Uses email parameter for 50k/day quota
-    async safeFetchTranslation(text, targetLang) {
-        const email = "h85269140@gmail.com"; // 🔹 Replace with your valid email
+    async safeFetchTranslation(text, targetLang, email) {
         const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|${targetLang}&de=${encodeURIComponent(email)}`;
         try {
             const res = await fetch(url);
             const data = await res.json();
             return data?.responseData?.translatedText || null;
-        } catch (e) {
-            console.error('API error:', e);
+        } catch {
             return null;
         }
     }
 
-    // Split long text into <=500-char chunks
-    chunkText(text, size = 490) {
-        const chunks = [];
-        for (let i = 0; i < text.length; i += size) {
-            chunks.push(text.slice(i, i + size));
+    chunkByLength(texts, maxLen) {
+        const batches = [];
+        let batch = [], len = 0;
+        for (const t of texts) {
+            const l = t.length + 13;
+            if (len + l > maxLen && batch.length) {
+                batches.push(batch);
+                batch = [];
+                len = 0;
+            }
+            batch.push(t);
+            len += l;
         }
-        return chunks;
+        if (batch.length) batches.push(batch);
+        return batches;
     }
 
     restoreOriginalTexts() {
-        this.textNodes.forEach((node, i) => {
-            node.nodeValue = this.originalTexts[i];
+        this.textNodes.forEach((node, i) => node.nodeValue = this.originalTexts[i]);
+    }
+
+    showProgressBar() {
+        const bar = document.createElement("div");
+        bar.id = "translationProgress";
+        Object.assign(bar.style, {
+            position: "fixed", top: "0", left: "0",
+            width: "0%", height: "3px", background: "#09f",
+            zIndex: "9999", transition: "width 0.3s ease"
         });
+        document.body.appendChild(bar);
     }
 
-    showLoadingIndicator() {
-        const loader = document.createElement('div');
-        loader.id = 'translationLoader';
-        loader.innerHTML = `
-            <div class="translation-loader">
-                <div class="loader-spinner"></div>
-                <span>Translating full page…</span>
-            </div>`;
-        document.body.appendChild(loader);
+    updateProgress(percent) {
+        const bar = document.getElementById("translationProgress");
+        if (bar) bar.style.width = `${Math.min(percent, 100)}%`;
     }
 
-    hideLoadingIndicator() {
-        const loader = document.getElementById('translationLoader');
-        if (loader) loader.remove();
+    hideProgressBar() {
+        const bar = document.getElementById("translationProgress");
+        if (bar) {
+            bar.style.width = "100%";
+            setTimeout(() => bar.remove(), 600);
+        }
     }
 
     sleep(ms) {
